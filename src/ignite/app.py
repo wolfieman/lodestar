@@ -19,13 +19,27 @@ from ignite.retrieval.sparse import BM25Retriever
 
 
 def _build_retriever(test_mode: bool) -> Retriever:
-    """Hybrid retriever: dense (vector) + sparse (BM25), fused with RRF."""
+    """Hybrid retriever (dense vector + sparse BM25, fused with RRF).
+
+    Degrades gracefully to BM25-only if the embedding model can't be loaded (e.g. no
+    network to download it), so the app always runs.
+    """
     snippets = load_snippets()
-    embedder = HashEmbedder() if test_mode else FastEmbedEmbedder()
-    dense = VectorRetriever(embedder)
-    dense.ingest(snippets)
     sparse = BM25Retriever(snippets)
-    return HybridRetriever(dense, sparse)
+    if test_mode:
+        dense = VectorRetriever(HashEmbedder())
+        dense.ingest(snippets)
+        return HybridRetriever(dense, sparse)
+    try:
+        dense = VectorRetriever(FastEmbedEmbedder())
+        dense.ingest(snippets)
+        return HybridRetriever(dense, sparse)
+    except Exception as exc:  # model-load/network failure → degrade, don't crash
+        print(
+            f"[ignite] embedding model unavailable ({type(exc).__name__}); "
+            "using BM25-only retrieval."
+        )
+        return sparse
 
 
 def build_responder(test_mode: bool | None = None) -> Responder:
