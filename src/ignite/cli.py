@@ -10,6 +10,8 @@ import sys
 
 from dotenv import load_dotenv
 
+from ignite.safety import detect_pii
+
 
 def main() -> int:
     """Entry point registered as the ``ignite`` console script."""
@@ -27,6 +29,12 @@ def main() -> int:
                 break
             if not user:
                 continue
+            flagged = detect_pii(user)
+            if flagged:
+                print(
+                    f"\n[notice] That may contain {', '.join(flagged)}. "
+                    "IgniteAI never needs personal identifiers — please omit them."
+                )
             print(f"\nIgniteAI: {bot.run(user)}")
     except (EOFError, KeyboardInterrupt):
         print()
