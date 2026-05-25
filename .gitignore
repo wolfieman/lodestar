@@ -78,3 +78,6 @@ $RECYCLE.BIN/
 ~$*.xlsx
 ~$*.pptx
 *.tmp
+
+# fastembed embedding-model cache (local, large)
+.models/
