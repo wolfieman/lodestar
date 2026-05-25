@@ -1,8 +1,7 @@
 # Product — IgniteAI (the custom GPT)
 
-**IgniteAI** is the chatbot that HP FOWA 2024 Team 4 actually shipped and won first place
-with. It is a **ChatGPT custom GPT** — a configured GPT with custom instructions, a set of
-conversation starters, and uploaded knowledge files.
+**IgniteAI** is the chatbot that HP FOWA 2024 Team 4 shipped and won first place with. It is
+a **ChatGPT custom GPT** — "Empowering HBCU Students with AI-Driven Career Support."
 
 Live GPT: https://chatgpt.com/g/g-SnbRewUCt-igniteai
 
@@ -10,17 +9,20 @@ This directory is the **source of truth** for what shipped. The Python code unde
 `../src/lodestar/` is a runnable mirror of this product (see
 `../docs/reference-vs-product.md`).
 
-## Contents
+## What was recovered (and how)
 
-```
-ignite-ai/
-├── instructions.md            # the GPT's system instructions
-├── conversation-starters.md   # the GPT's suggested prompts
-└── knowledge/                 # the GPT's uploaded knowledge files
-```
+IgniteAI is **published** (by "community builder"); the maintainer has **chat-only** access,
+not edit access. Its configuration was therefore recovered by **prompt-extraction** from the
+live GPT (raw captures in the gitignored `../_staging/gpt/`):
 
-## Status — pending export (Phase 2)
+- `instructions.md` — behavioral **specification** (the GPT declines to reveal its verbatim
+  hidden prompt; this captures its observed behavior, which is what the reference impl mirrors).
+- `conversation-starters.md` — the four intro-screen starters, verbatim.
+- `knowledge/` — **empty**: IgniteAI reported no browseable knowledge files; it is an
+  **instruction-driven** GPT. The reference impl's knowledge comes from freshly authored
+  sample data, not from the product (see `../docs/decisions.md`).
 
-These files are exported from the live GPT by the maintainer (who has editor access). Until
-then they are placeholders. Export steps are provided separately; raw exports land in the
-gitignored `../_staging/gpt/` before being curated into `ignite-ai/`.
+## Observed capability
+
+A **`personal_context`** tool/action is invoked on most turns (personalization). Exact schema
+is not inspectable without edit access.
