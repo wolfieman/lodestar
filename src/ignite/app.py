@@ -40,3 +40,8 @@ def build_agent(test_mode: bool | None = None) -> IgniteAgent:
     retriever = _build_retriever(tm)
     tools = [retrieve_knowledge_tool(retriever), web_search_tool()]
     return IgniteAgent(get_provider(tm), tools)
+
+
+def build_retriever(test_mode: bool | None = None) -> Retriever:
+    """Public factory for the hybrid retriever (used by the MCP server)."""
+    return _build_retriever(env_test_mode() if test_mode is None else test_mode)
