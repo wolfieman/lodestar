@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import math
+import os
+from pathlib import Path
 
 
 class HashEmbedder:
@@ -29,12 +31,20 @@ class HashEmbedder:
 
 
 class FastEmbedEmbedder:
-    """Local ONNX embeddings via fastembed (downloads the model on first use)."""
+    """Local ONNX embeddings via fastembed.
+
+    Defaults to a repo-local model cache (``.models/``, gitignored) so a model
+    is reused offline; override with the ``FASTEMBED_CACHE_PATH`` env var. If the model
+    isn't cached and can't be fetched, ``app._build_retriever`` falls back to BM25.
+    """
 
     def __init__(self, model: str = "BAAI/bge-small-en-v1.5") -> None:
         from fastembed import TextEmbedding
 
-        self._model = TextEmbedding(model)
+        cache_dir = os.getenv("FASTEMBED_CACHE_PATH") or str(
+            Path(__file__).resolve().parents[3] / ".models"
+        )
+        self._model = TextEmbedding(model, cache_dir=cache_dir)
         self.dim = 384
 
     def embed(self, texts: list[str]) -> list[list[float]]:
