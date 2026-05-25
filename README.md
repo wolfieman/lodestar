@@ -20,8 +20,8 @@
 
 > **At a glance:** model-agnostic LLM layer (Claude · OpenAI) · **hybrid RAG** (BM25 + LanceDB
 > vectors, fused with RRF) · **agentic** tool-use (router → tool loop) · exposed as an **MCP
-> server** for Claude Desktop · **LLM-as-judge** evals · OWASP/FERPA guardrails · 33 tests ·
-> ruff-clean · Python 3.14 / uv · runs fully offline in test mode
+> server** for Claude Desktop · **LLM-as-judge** evals · OWASP/FERPA guardrails ·
+> **FastAPI web UI** (deploy-ready) · 36 tests · ruff-clean · Python 3.14 / uv · offline test mode
 
 ## TL;DR
 
@@ -120,6 +120,18 @@ uv run ignite             # the 2024 IgniteAI reproduction
 uv run pytest -m unit      # 33 offline tests
 uv run python -m lodestar.mcp_server   # serve over MCP (see docs/mcp.md to wire into Claude Desktop)
 ```
+
+## Web UI & deploy
+
+A FastAPI single-page chat ships in the box (`src/lodestar/web.py` + `static/`):
+
+```bash
+uv run lodestar-web        # http://127.0.0.1:8000  (offline mock by default)
+```
+
+Containerized ([`Dockerfile`](Dockerfile)) and one-command-deployable to Railway / Fly /
+Render — set `ANTHROPIC_API_KEY` + `TEST_MODE=false` for live Claude. See
+[`docs/deploy.md`](docs/deploy.md).
 
 ## Built from a learning plan
 

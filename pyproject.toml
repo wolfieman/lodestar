@@ -1,7 +1,7 @@
 [project]
 name = "lodestar"
 version = "0.1.0"
-description = "Reference implementation of IgniteAI — an HBCU student career-advice chatbot (HP FOWA 2024, first place)."
+description = "Lodestar — a 2026 agentic, RAG-grounded HBCU career-advice assistant (model-agnostic, hybrid RAG, MCP server), evolved from the first-place HP FOWA 2024 IgniteAI custom GPT."
 readme = "README.md"
 requires-python = ">=3.14"
 license = { file = "LICENSE" }
@@ -14,14 +14,16 @@ maintainers = [
 dependencies = [
     "python-dotenv>=1.0",
     "cryptography>=42.0",
-    # v1 reproduction (lodestar)
-    "openai>=1.0",
-    # v2 rebuild (ignite): model-agnostic (Claude default), RAG, MCP
+    # Lodestar rebuild (src/lodestar): model-agnostic (Claude default), RAG, MCP, web
     "anthropic>=0.40",
     "mcp>=1.0",
     "lancedb>=0.13",
     "fastembed>=0.4",
     "rank-bm25>=0.2",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    # IgniteAI reproduction (src/ignite): the 2024 original was OpenAI-based
+    "openai>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -33,6 +35,7 @@ dev = [
 
 [project.scripts]
 lodestar = "lodestar.cli:main"
+lodestar-web = "lodestar.web:main"
 ignite = "ignite.cli:main"
 
 [build-system]

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lodestar — HBCU Career Assistant</title>
+  <style>
+    :root { --bg:#0f1216; --panel:#171c23; --ink:#e7edf3; --muted:#8a97a6; --accent:#d97757; --user:#22303c; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    header { padding:20px 16px 8px; text-align:center; }
+    header h1 { margin:0; font-size:1.6rem; }
+    header p { margin:4px 0 0; color:var(--muted); font-size:.9rem; }
+    main { max-width:760px; margin:0 auto; padding:12px 16px 120px; }
+    #log { display:flex; flex-direction:column; gap:12px; }
+    .msg { padding:12px 14px; border-radius:12px; white-space:pre-wrap; word-wrap:break-word; }
+    .user { background:var(--user); align-self:flex-end; max-width:85%; }
+    .bot { background:var(--panel); align-self:flex-start; max-width:95%; }
+    .role { font-size:.72rem; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.05em; }
+    .starters { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0; }
+    .chip { background:var(--panel); border:1px solid #2a323c; color:var(--ink); border-radius:999px; padding:8px 12px; font-size:.85rem; cursor:pointer; }
+    .chip:hover { border-color:var(--accent); }
+    form { position:fixed; bottom:0; left:0; right:0; background:linear-gradient(transparent, var(--bg) 30%); padding:16px; }
+    .bar { max-width:760px; margin:0 auto; display:flex; gap:8px; }
+    input { flex:1; background:var(--panel); border:1px solid #2a323c; color:var(--ink); border-radius:10px; padding:12px 14px; font-size:1rem; }
+    button { background:var(--accent); color:#1a1109; border:0; border-radius:10px; padding:0 18px; font-weight:600; cursor:pointer; }
+    button:disabled { opacity:.5; cursor:default; }
+    a { color:var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lodestar&nbsp;🧭</h1>
+    <p>An agentic, RAG-grounded career assistant for HBCU students — evolved from the first-place HP&nbsp;FOWA&nbsp;2024 IgniteAI.</p>
+  </header>
+  <main>
+    <div id="log">
+      <div class="bot"><div class="role">Lodestar</div>Hi! I can help with résumés, interviews, internships, scholarships, and networking. Ask me anything, or try one of these:</div>
+      <div class="starters">
+        <button class="chip">How do I find scholarships for HBCU STEM students?</button>
+        <button class="chip">What skills should I highlight on a data-science résumé?</button>
+        <button class="chip">How do I prepare for a behavioral interview?</button>
+        <button class="chip">Best ways to network with professionals while in college?</button>
+      </div>
+    </div>
+  </main>
+  <form id="f">
+    <div class="bar">
+      <input id="q" autocomplete="off" placeholder="Ask Lodestar…" />
+      <button id="send" type="submit">Send</button>
+    </div>
+  </form>
+  <script>
+    const log = document.getElementById('log');
+    const form = document.getElementById('f');
+    const q = document.getElementById('q');
+    const send = document.getElementById('send');
+    function add(role, text) {
+      const el = document.createElement('div');
+      el.className = 'msg ' + (role === 'You' ? 'user' : 'bot');
+      el.innerHTML = '<div class="role"></div>';
+      el.querySelector('.role').textContent = role;
+      el.appendChild(document.createTextNode(text));
+      log.appendChild(el);
+      window.scrollTo(0, document.body.scrollHeight);
+      return el;
+    }
+    async function ask(message) {
+      add('You', message);
+      send.disabled = true;
+      const thinking = add('Lodestar', '…');
+      try {
+        const r = await fetch('/api/chat', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ message })
+        });
+        const data = await r.json();
+        thinking.removeChild(thinking.lastChild);
+        thinking.appendChild(document.createTextNode(data.reply || '(no response)'));
+      } catch (e) {
+        thinking.removeChild(thinking.lastChild);
+        thinking.appendChild(document.createTextNode('Error: ' + e));
+      }
+      send.disabled = false;
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const m = q.value.trim();
+      if (m) { q.value = ''; ask(m); }
+    });
+    document.querySelectorAll('.chip').forEach(c =>
+      c.addEventListener('click', () => ask(c.textContent)));
+  </script>
+</body>
+</html>
