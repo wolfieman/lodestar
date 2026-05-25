@@ -3,7 +3,7 @@ name = "lodestar"
 version = "0.1.0"
 description = "Reference implementation of IgniteAI — an HBCU student career-advice chatbot (HP FOWA 2024, first place)."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 license = { file = "LICENSE" }
 authors = [
     { name = "Wolfgang Sanyer", email = "wolfgang.sanyer@gmail.com" },
@@ -12,9 +12,15 @@ maintainers = [
     { name = "Wolfgang Sanyer", email = "wolfgang.sanyer@gmail.com" },
 ]
 dependencies = [
-    "openai>=1.0",
     "python-dotenv>=1.0",
     "cryptography>=42.0",
+    # v1 reproduction (lodestar)
+    "openai>=1.0",
+    # v2 rebuild (ignite): model-agnostic (Claude default), RAG, MCP
+    "anthropic>=0.40",
+    "mcp>=1.0",
+    "lancedb>=0.13",
+    "fastembed>=0.4",
 ]
 
 [project.optional-dependencies]
@@ -26,17 +32,18 @@ dev = [
 
 [project.scripts]
 lodestar = "lodestar.cli:main"
+ignite = "ignite.cli:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/lodestar"]
+packages = ["src/lodestar", "src/ignite"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py314"
 exclude = [".venv", "_staging"]
 
 [tool.ruff.lint]
