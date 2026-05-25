@@ -1,0 +1,50 @@
+# IgniteAI — System Architecture
+
+This is the **intended production architecture** for IgniteAI as designed by HP FOWA 2024
+Team 4. (Adapted from the team's `ims_reqs_and_architecture.md`, originally authored by
+Wolfgang Sanyer.) The local reference implementation in this repo implements a deliberately
+simplified subset — see [decisions.md](decisions.md) and [reference-vs-product.md](reference-vs-product.md).
+
+## Information system requirements
+
+1. **User volume & scalability** — designed for ~2,500 students per campus; auto-scaling
+   groups and load balancing for traffic spikes.
+2. **Data sources & integration**
+   - *Academic advice:* university academic databases (courses, schedules, faculty) +
+     external platforms (Khan Academy, Coursera, edX).
+   - *Career counseling:* university career-services data + job portals (Indeed, LinkedIn,
+     Glassdoor).
+   - *Internships:* university internship programs + industry-partner APIs.
+3. **Security & compliance**
+   - *FERPA:* encryption at rest and in transit, strict access controls, audit trails.
+   - *GDPR:* data minimization, explicit user consent, right to access and erasure.
+4. **Performance & availability** — cloud infrastructure (AWS/Azure/GCP), monitoring and
+   alerting, regular backups and a disaster-recovery plan.
+5. **Interaction & feedback** — interaction logging and analytics for continuous improvement.
+
+## High-level architecture
+
+1. **Frontend interface** — web/mobile app where students chat with IgniteAI.
+2. **Chatbot engine** — OpenAI GPT, augmented with Perplexity for advanced query handling.
+3. **Backend services**
+   - *Data integration layer* — APIs to internal and external data sources.
+   - *Database* — Airtable for structured data (interactions, resources, internship listings).
+   - *Workflow automation* — Make.com to orchestrate services.
+4. **Security layer** — encryption, access controls, compliance checks.
+5. **Logging & analytics** — interaction logging plus analytics tooling for insights.
+6. **Scalability & performance** — cloud infrastructure with auto-scaling and load balancing.
+
+## What the reference implementation covers
+
+The Python reference implementation is a **local, single-user CLI** that captures the core
+conversational behavior:
+
+- **Chatbot engine** → OpenAI `gpt-4o-mini` (`src/lodestar/chatbot.py`).
+- **Knowledge grounding** → a lightweight retrieval layer over a local
+  academic/career/internship knowledge base (`src/lodestar/knowledge.py`), standing in for
+  the Airtable-backed data integration layer.
+- **Data handling** → a Fernet encryption helper (`src/lodestar/privacy.py`) demonstrating
+  the FERPA/GDPR posture.
+
+Out of scope locally: the web/mobile frontend, Perplexity augmentation, Airtable, Make.com
+automation, and cloud auto-scaling. These remain documented here as the production design.

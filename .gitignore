@@ -1,0 +1,80 @@
+# Lodestar
+# .gitignore
+
+# ============================================================================
+# Python
+# ============================================================================
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Test / coverage
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# ============================================================================
+# Secrets / Credentials
+# ============================================================================
+.env
+.env.local
+credentials.json
+secrets/
+
+# ============================================================================
+# Staging — raw recovered material (Drive exports, repo zips, GPT export)
+# ============================================================================
+_staging/
+
+# ============================================================================
+# IDE / Editor
+# ============================================================================
+.vscode/
+*.code-workspace
+.idea/
+*.iml
+
+# Claude Code — track CLAUDE.md, keep local settings/state ignored
+.claude/*
+!.claude/CLAUDE.md
+.claude/settings.local.json
+
+# ============================================================================
+# OS Generated
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# MS Office temporary files
+~$*.docx
+~$*.xlsx
+~$*.pptx
+*.tmp

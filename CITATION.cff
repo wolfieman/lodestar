@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you reference this work, please cite as below."
+title: "Lodestar / IgniteAI: An HBCU Student Career-Advice Chatbot"
+abstract: >
+  Reference implementation and preservation of IgniteAI, a career-advice
+  chatbot for students at Historically Black Colleges and Universities (HBCUs).
+  Originally built as a ChatGPT custom GPT by Team 4 of the HP Future of Work
+  Accelerator (FOWA) 2024 at the HBCU Technology Conference, where it won first
+  place. This repository preserves the shipped custom-GPT product and provides
+  a clean, runnable Python reference implementation (OpenAI gpt-4o-mini grounded
+  on an academic/career/internship knowledge base) that mirrors its behavior.
+type: software
+authors:
+  - family-names: Sanyer
+    given-names: Wolfgang
+    affiliation: "Fayetteville State University, Broadwell College of Business and Economics"
+version: "0.1.0"
+date-released: "2026-05-25"
+license: Polyform-Noncommercial-1.0.0
+url: "https://github.com/wolfieman/lodestar"
+repository-code: "https://github.com/wolfieman/lodestar"
+keywords:
+  - ai-chatbot
+  - custom-gpt
+  - openai
+  - llm
+  - hbcu
+  - career-advising
+  - education-technology
+  - hp-fowa
+  - retrieval
+  - python
