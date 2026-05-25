@@ -1,20 +1,35 @@
-"""Command-line entry point for the IgniteAI rebuild (``uv run ignite``).
+"""Command-line REPL for IgniteAI (``uv run ignite``).
 
-Scaffold stub. The agentic, RAG-grounded REPL is implemented in phases R1–R2
-(see the plan and ``docs/roadmap.md``).
+Reads ``.env``. With ``TEST_MODE=true`` (default) it runs fully offline (mock provider +
+hash embeddings). Set ``TEST_MODE=false`` and ``ANTHROPIC_API_KEY`` for live Claude.
 """
 
 from __future__ import annotations
 
 import sys
 
+from dotenv import load_dotenv
+
 
 def main() -> int:
     """Entry point registered as the ``ignite`` console script."""
-    print(
-        "IgniteAI rebuild scaffold — provider/RAG/agentic layers land in R1–R2. "
-        "See docs/roadmap.md."
-    )
+    load_dotenv()
+    from ignite.app import build_responder
+    from ignite.providers.config import env_test_mode
+
+    bot = build_responder()
+    mode = "offline mock" if env_test_mode() else f"live ({bot.provider.model})"
+    print(f"IgniteAI (rebuild) — {mode}. Type 'quit' to exit.")
+    try:
+        while True:
+            user = input("\nYou: ").strip()
+            if user.lower() in {"quit", "exit", "bye"}:
+                break
+            if not user:
+                continue
+            print(f"\nIgniteAI: {bot.respond(user)}")
+    except (EOFError, KeyboardInterrupt):
+        print()
     return 0
 
 
