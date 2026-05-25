@@ -12,6 +12,18 @@
     "content": "For students, well-documented projects often matter more than coursework. For each project, name the tools, state the problem it solved, and quantify the result. A public GitHub or portfolio link gives recruiters something concrete to discuss."
   },
   {
+    "id": "resume-quantify",
+    "category": "resume",
+    "title": "Quantifying achievements with strong action verbs",
+    "content": "Start each bullet with an action verb (built, analyzed, led, automated) and attach a number wherever possible: percent improved, hours saved, people served, dollars handled. Numbers turn vague duties into evidence and survive applicant-tracking-system keyword scans."
+  },
+  {
+    "id": "resume-firstgen",
+    "category": "resume",
+    "title": "Translating non-traditional experience",
+    "content": "Work, family, military, and community responsibilities are real, transferable experience. Frame them in professional terms: a campus job becomes customer service and cash handling; organizing an event becomes project coordination. First-generation students often undersell exactly the leadership employers want."
+  },
+  {
     "id": "interview-behavioral",
     "category": "interview",
     "title": "Answering behavioral questions with STAR",
@@ -22,6 +34,18 @@
     "category": "interview",
     "title": "Preparing for a tech interview",
     "content": "Clarify the role and interview stage first, then prepare in layers: research the company, rehearse a concise self-introduction, review core technical concepts for the role, and prepare thoughtful questions to ask the interviewer."
+  },
+  {
+    "id": "interview-technical",
+    "category": "interview",
+    "title": "Practicing for technical and case interviews",
+    "content": "For coding interviews, practice fundamentals (arrays, strings, hash maps, recursion) on LeetCode or HackerRank and talk through your reasoning out loud. For consulting or analytics cases, structure the problem before calculating. Mock interviews with peers or a career center build the most confidence."
+  },
+  {
+    "id": "interview-questions-to-ask",
+    "category": "interview",
+    "title": "Questions to ask your interviewer",
+    "content": "Always have three questions ready: one about the role's day-to-day, one about how success is measured, and one about growth or mentorship. Thoughtful questions signal genuine interest and help you judge whether the team is a fit for you."
   },
   {
     "id": "scholarship-hbcu-stem",
@@ -36,6 +60,18 @@
     "content": "Most students lose scholarships by missing deadlines. Keep a simple tracker of each award's deadline, GPA and essay requirements, and recommendation letters, and aim for a steady cadence of applications rather than a last-minute rush."
   },
   {
+    "id": "scholarship-essays",
+    "category": "scholarship",
+    "title": "Writing a strong scholarship essay",
+    "content": "Answer the exact prompt, open with a specific moment rather than a generality, and connect your story to the scholarship's mission. Reuse a strong core essay across applications but tailor the opening and the why-this-program paragraph each time. Have someone proofread before you submit."
+  },
+  {
+    "id": "scholarship-federal",
+    "category": "scholarship",
+    "title": "Federal and corporate STEM funding pipelines",
+    "content": "The DoD SMART Scholarship covers full tuition plus a stipend and guarantees a post-graduation job; NSF S-STEM funds need-based STEM cohorts through your department; agencies like NIH (UGSP), DOE Scholars, and NOAA Hollings pair funding with paid research. Corporate programs from Google, Microsoft, and Lockheed Martin often partner with NSBE chapters."
+  },
+  {
     "id": "networking-alumni",
     "category": "networking",
     "title": "Networking through HBCU alumni",
@@ -48,15 +84,57 @@
     "content": "Professors frequently have industry contacts, research partnerships, and former students in the field. Visit office hours, ask about their career path, and request introductions to organizations, conferences, or alumni in your area of interest."
   },
   {
+    "id": "networking-linkedin",
+    "category": "networking",
+    "title": "Building a LinkedIn profile that gets noticed",
+    "content": "Even as a first- or second-year student, a complete LinkedIn profile helps recruiters find you: a clear headline (major plus interest), a short summary, your projects, and skills. Follow target companies, comment thoughtfully on industry posts, and connect with a brief note rather than a blank request."
+  },
+  {
+    "id": "networking-conferences",
+    "category": "networking",
+    "title": "Recruiting at conferences and career fairs",
+    "content": "Conferences like NSBE, AfroTech, Grace Hopper, and SHPE are major recruiting venues where companies hire directly. Prepare a 30-second introduction, research the attending employers, bring resumes, and follow up on LinkedIn within 48 hours mentioning something specific from your conversation."
+  },
+  {
     "id": "internship-search",
     "category": "internship",
     "title": "Finding internships early",
     "content": "Start before your senior year. Use your career center, attend career fairs with a short prepared introduction, and apply through professional-society pipelines. Research Experiences for Undergraduates often include a stipend and count as strong experience."
   },
   {
+    "id": "internship-reu",
+    "category": "internship",
+    "title": "Applying to Research Experiences for Undergraduates (REUs)",
+    "content": "NSF-funded REUs place undergraduates in paid summer research (typically a stipend plus housing and travel) at universities nationwide. Apply to several in winter, ask a professor for a recommendation early, and write a statement that connects a specific research interest to the host lab's work."
+  },
+  {
+    "id": "internship-outreach",
+    "category": "internship",
+    "title": "Cold outreach to recruiters and managers",
+    "content": "Many internships come from a direct, polite message rather than a portal. Identify a recruiter or team lead on LinkedIn, send a few concise sentences on who you are, why their work interests you, and a specific ask (a referral or a short chat). Personalize each message and follow up once after a week."
+  },
+  {
     "id": "academic-course-fit",
     "category": "academic",
     "title": "Choosing courses that support your goals",
     "content": "Align electives with the roles you are targeting. For data-focused careers, prioritize statistics, databases, and a programming sequence. Relevant coursework strengthens a resume when internship experience is still limited."
+  },
+  {
+    "id": "academic-research",
+    "category": "academic",
+    "title": "Getting into undergraduate research",
+    "content": "Undergraduate research builds skills, recommendation letters, and graduate-school readiness. Read a professor's recent work, then email a short, specific note expressing interest and offering to help. Start by volunteering a few hours a week; many positions later become paid or earn course credit."
+  },
+  {
+    "id": "academic-gpa-recovery",
+    "category": "academic",
+    "title": "Recovering from a rough semester",
+    "content": "A low semester is not the end of your trajectory. Use academic support and tutoring early, retake key courses if your school allows grade replacement, and show an upward trend. Many employers and graduate programs weigh recent performance and a clear growth story over a single GPA number."
+  },
+  {
+    "id": "career-offer-negotiation",
+    "category": "career",
+    "title": "Evaluating and negotiating a job or internship offer",
+    "content": "Look beyond base pay: consider the team, mentorship, learning, location, and benefits. It is normal and professional to ask for time to decide and to negotiate respectfully, especially on salary or start date. Research typical ranges (Levels.fyi, Glassdoor) so your ask is grounded in data."
   }
 ]
