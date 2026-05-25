@@ -6,14 +6,14 @@ the win** and **demonstrates current skill**.
 ## Track A — As-shipped reproduction (v1) ✅ built
 
 A faithful, runnable mirror of the **2024 IgniteAI custom GPT** that won HP FOWA first place.
-- `src/lodestar/` — CLI chatbot, `gpt-4o-mini`, keyword retrieval over a small knowledge base.
+- `src/ignite/` — CLI chatbot, `gpt-4o-mini`, keyword retrieval over a small knowledge base.
 - Clean-room (no GPL team code), tested, documented.
 - **Purpose:** an honest record of what shipped. This track stays intentionally simple,
   matching the original product. It will be tagged (e.g. `v1-reproduction`) when frozen.
 
 ## Track B — Modernized rebuild (2026) ✅ built
 
-The modern rebuild in `src/ignite/` (CLI `ignite`), realizing the architecture the team
+The modern rebuild in `src/lodestar/` (CLI `lodestar`), realizing the architecture the team
 *designed but never built*, with current AI:
 
 - **Model-agnostic provider layer** (`providers/`), default **Claude** (`claude-sonnet-4-6`,
@@ -22,7 +22,7 @@ The modern rebuild in `src/ignite/` (CLI `ignite`), realizing the architecture t
   sparse, fused with Reciprocal Rank Fusion.
 - **Agentic** tool use (`agents/`): keyword router → Claude native tool-use loop with
   `retrieve_knowledge` + `web_search` tools.
-- **MCP server** (`mcp_server.py`) exposing IgniteAI to Claude Desktop / MCP clients.
+- **MCP server** (`mcp_server.py`) exposing Lodestar to Claude Desktop / MCP clients.
 - **LLM-as-judge evals** (`evals/`) + **security** (`safety.py`; `docs/security.md`: OWASP
   LLM Top-10 + FERPA).
 - Python 3.14, uv, ruff, pytest; offline-runnable via `TEST_MODE` (mock + hash embeddings).
@@ -34,8 +34,8 @@ The modern rebuild in `src/ignite/` (CLI `ignite`), realizing the architecture t
 
 ## How the tracks coexist
 
-The v1 reproduction is kept (tagged `v1-reproduction`) in `src/lodestar/` (CLI `lodestar`);
-the v2 rebuild lives alongside it in `src/ignite/` (CLI `ignite`), so the evolution is visible
+The v1 reproduction is kept (tagged `v1-reproduction`) in `src/ignite/` (CLI `ignite`);
+the v2 rebuild lives alongside it in `src/lodestar/` (CLI `lodestar`), so the evolution is visible
 side by side in one repo.
 
 ## Narrative

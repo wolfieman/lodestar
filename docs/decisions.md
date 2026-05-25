@@ -36,7 +36,7 @@ GPL `LICENSE`, or `tests/check_quota_limit.py`.
 
 ## 4. Reference impl shape
 
-- **CLI-first** (`uv run lodestar`). A web/API layer is explicitly out of scope; the
+- **CLI-first** (`uv run ignite`). A web/API layer is explicitly out of scope; the
   upstream GPT-2 Flask app is cut.
 - **Retrieval** is dependency-light (keyword / TF-IDF over the knowledge base), not an
   embeddings/vector database — matches "simple knowledge base." Revisit if embeddings are

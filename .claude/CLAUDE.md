@@ -8,9 +8,9 @@ Cross-project conventions live in `../orchestrator/`.
 
 - **Origin:** HP Future of Work Accelerator (FOWA) 2024, HBCU Technology Conference — Team 4, first place.
 - **Shipped product:** IgniteAI, a ChatGPT **custom GPT** (preserved under `product/`, source of truth).
-- **This repo:** (a) preserve/document the custom GPT, (b) ship a clean, runnable Python **reference implementation** under `src/lodestar/` that mirrors it.
-- **Stack:** Python 3.14, **uv**, ruff, pytest. v1 (`src/lodestar/`) uses OpenAI `gpt-4o-mini`; v2 rebuild (`src/ignite/`) is model-agnostic (default Claude) with hybrid RAG, agentic tool-use, and an MCP server.
-- **Status:** Both tracks built. v1 tagged `v1-reproduction`; v2 = `src/ignite/` (CLI `ignite`; MCP via `uv run python -m ignite.mcp_server`; evals in `evals/`). See `docs/roadmap.md` + `docs/ibm-curriculum-mapping.md`.
+- **This repo:** (a) preserve/document the custom GPT, (b) ship a clean, runnable Python **reference implementation** under `src/ignite/` that mirrors it.
+- **Stack:** Python 3.14, **uv**, ruff, pytest. v1 (`src/ignite/`) uses OpenAI `gpt-4o-mini`; v2 rebuild (`src/lodestar/`) is model-agnostic (default Claude) with hybrid RAG, agentic tool-use, and an MCP server.
+- **Status:** Both tracks built. v1 tagged `v1-reproduction`; v2 = `src/lodestar/` (CLI `lodestar`; MCP via `uv run python -m lodestar.mcp_server`; evals in `evals/`). See `docs/roadmap.md` + `docs/ibm-curriculum-mapping.md`.
 
 ## Project context
 

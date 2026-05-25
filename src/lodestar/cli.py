@@ -1,7 +1,7 @@
-"""Command-line REPL for the Lodestar chatbot (``uv run lodestar``).
+"""Command-line REPL for Lodestar (``uv run lodestar``).
 
-Reads ``.env`` for ``OPENAI_API_KEY`` and ``TEST_MODE``. With ``TEST_MODE=true`` the
-chatbot runs offline with deterministic mock responses and needs no API key.
+Reads ``.env``. With ``TEST_MODE=true`` (default) it runs fully offline (mock provider +
+hash embeddings). Set ``TEST_MODE=false`` and ``ANTHROPIC_API_KEY`` for live Claude.
 """
 
 from __future__ import annotations
@@ -10,15 +10,18 @@ import sys
 
 from dotenv import load_dotenv
 
-from lodestar.chatbot import Chatbot
+from lodestar.safety import detect_pii
 
 
 def main() -> int:
     """Entry point registered as the ``lodestar`` console script."""
     load_dotenv()
-    bot = Chatbot()
-    mode = "offline mock" if bot.test_mode else f"live ({bot.model})"
-    print(f"IgniteAI (Lodestar reference impl) — {mode}. Type 'quit' to exit.")
+    from lodestar.app import build_agent
+    from lodestar.providers.config import env_test_mode
+
+    bot = build_agent()
+    mode = "offline mock" if env_test_mode() else f"live ({bot.provider.model})"
+    print(f"Lodestar (agentic) — {mode}. Type 'quit' to exit.")
     try:
         while True:
             user = input("\nYou: ").strip()
@@ -26,7 +29,13 @@ def main() -> int:
                 break
             if not user:
                 continue
-            print(f"\nIgniteAI: {bot.respond(user)}")
+            flagged = detect_pii(user)
+            if flagged:
+                print(
+                    f"\n[notice] That may contain {', '.join(flagged)}. "
+                    "Lodestar never needs personal identifiers — please omit them."
+                )
+            print(f"\nLodestar: {bot.run(user)}")
     except (EOFError, KeyboardInterrupt):
         print()
     return 0

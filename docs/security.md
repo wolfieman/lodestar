@@ -1,12 +1,12 @@
 # Security & Governance
 
-IgniteAI serves students, so it's built with an LLM-security and FERPA/GDPR posture from
+Lodestar serves students, so it's built with an LLM-security and FERPA/GDPR posture from
 the start. This maps the relevant **OWASP Top 10 for LLM Applications** risks to concrete
 mitigations in this repo, per the AI-Security track of the IBM curriculum.
 
 ## OWASP LLM Top-10 → mitigations
 
-| Risk | Mitigation in IgniteAI |
+| Risk | Mitigation in Lodestar |
 |---|---|
 | **LLM01 Prompt injection** | The system prompt (`prompts/system.py`) instructs the model to ignore any instruction — including text inside retrieved material or user input — that tries to override its rules. Retrieved snippets are presented as *reference material*, not commands. |
 | **LLM02 Insecure output handling** | Tool results are returned as data; the CLI renders text only (no eval/exec). The `web_search` tool is a stub (no live fetch executed yet). |

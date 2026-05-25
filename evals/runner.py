@@ -1,6 +1,6 @@
 """LLM-as-judge evaluation harness.
 
-Answers a fixed question set with IgniteAI, then has the judge model score each answer
+Answers a fixed question set with Lodestar, then has the judge model score each answer
 against ``rubric.md``. Offline (TEST_MODE) it runs end-to-end with mock answers + a mock
 judge (scores marked unparseable) to validate mechanics; live runs produce real scores.
 
@@ -14,8 +14,8 @@ import json
 import re
 from pathlib import Path
 
-from ignite.app import build_responder
-from ignite.providers.config import env_test_mode, get_provider
+from lodestar.app import build_responder
+from lodestar.providers.config import env_test_mode, get_provider
 
 QUESTIONS = [
     "How do I write a strong resume for a data science internship?",

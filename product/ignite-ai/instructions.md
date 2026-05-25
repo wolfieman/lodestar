@@ -3,7 +3,7 @@
 > **Note on provenance.** IgniteAI is a published custom GPT to which the maintainer has
 > chat-only access; it declines to reveal its hidden system prompt verbatim. This file
 > therefore captures IgniteAI's **observed behavioral specification** — what it does, not
-> its proprietary wording. The reference implementation (`src/lodestar/prompt.py`) is
+> its proprietary wording. The reference implementation (`src/ignite/prompt.py`) is
 > written fresh from this spec (clean-room — see `../../docs/decisions.md`).
 
 ## Identity & purpose

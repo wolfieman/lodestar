@@ -1,7 +1,7 @@
-"""IgniteAI rebuild (Track B) — agentic, RAG-grounded HBCU career-advice assistant.
+"""IgniteAI — faithful reproduction of the 2024 HBCU career-advice custom GPT.
 
-Model-agnostic (Claude default), retrieval over a vector store, exposed via MCP.
-The v1 faithful reproduction lives in the sibling ``lodestar`` package.
+The original product (a ChatGPT custom GPT) that won HP FOWA 2024. The 2026 modern
+rebuild lives in the sibling ``lodestar`` package.
 """
 
-__version__ = "0.2.0"
+__version__ = "0.1.0"
