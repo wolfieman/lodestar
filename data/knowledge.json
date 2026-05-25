@@ -1,0 +1,62 @@
+[
+  {
+    "id": "resume-tech-skills",
+    "category": "resume",
+    "title": "Highlighting technical skills on a tech resume",
+    "content": "Lead your skills section with the languages and tools you can actually discuss in an interview, commonly Python, SQL, and Git, and group them so a recruiter can scan them in seconds. Back each claim with a project that shows the skill in use."
+  },
+  {
+    "id": "resume-projects",
+    "category": "resume",
+    "title": "Using projects to stand out",
+    "content": "For students, well-documented projects often matter more than coursework. For each project, name the tools, state the problem it solved, and quantify the result. A public GitHub or portfolio link gives recruiters something concrete to discuss."
+  },
+  {
+    "id": "interview-behavioral",
+    "category": "interview",
+    "title": "Answering behavioral questions with STAR",
+    "content": "Structure behavioral answers as Situation, Task, Action, Result. Prepare three or four stories you can adapt to common prompts about teamwork, conflict, and overcoming setbacks, and end each with a measurable outcome."
+  },
+  {
+    "id": "interview-prep-plan",
+    "category": "interview",
+    "title": "Preparing for a tech interview",
+    "content": "Clarify the role and interview stage first, then prepare in layers: research the company, rehearse a concise self-introduction, review core technical concepts for the role, and prepare thoughtful questions to ask the interviewer."
+  },
+  {
+    "id": "scholarship-hbcu-stem",
+    "category": "scholarship",
+    "title": "Finding HBCU STEM scholarships",
+    "content": "Combine HBCU-focused funds such as the UNCF and the Thurgood Marshall College Fund with STEM organization scholarships such as NSBE, and federal programs such as the DoD SMART Scholarship and NSF S-STEM. Ask your department chair and financial aid office about funded research and named scholarships."
+  },
+  {
+    "id": "scholarship-calendar",
+    "category": "scholarship",
+    "title": "Tracking scholarship deadlines",
+    "content": "Most students lose scholarships by missing deadlines. Keep a simple tracker of each award's deadline, GPA and essay requirements, and recommendation letters, and aim for a steady cadence of applications rather than a last-minute rush."
+  },
+  {
+    "id": "networking-alumni",
+    "category": "networking",
+    "title": "Networking through HBCU alumni",
+    "content": "HBCU alumni networks are often very willing to help current students with resume reviews, mentorship, and referrals. Reach out on LinkedIn or through your alumni association with a short, respectful message that names your school, major, and what you would like to learn."
+  },
+  {
+    "id": "networking-professors",
+    "category": "networking",
+    "title": "Using professors as industry connectors",
+    "content": "Professors frequently have industry contacts, research partnerships, and former students in the field. Visit office hours, ask about their career path, and request introductions to organizations, conferences, or alumni in your area of interest."
+  },
+  {
+    "id": "internship-search",
+    "category": "internship",
+    "title": "Finding internships early",
+    "content": "Start before your senior year. Use your career center, attend career fairs with a short prepared introduction, and apply through professional-society pipelines. Research Experiences for Undergraduates often include a stipend and count as strong experience."
+  },
+  {
+    "id": "academic-course-fit",
+    "category": "academic",
+    "title": "Choosing courses that support your goals",
+    "content": "Align electives with the roles you are targeting. For data-focused careers, prioritize statistics, databases, and a programming sequence. Relevant coursework strengthens a resume when internship experience is still limited."
+  }
+]
