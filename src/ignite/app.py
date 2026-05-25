@@ -11,15 +11,21 @@ from ignite.agents.agent import IgniteAgent
 from ignite.agents.tools import retrieve_knowledge_tool, web_search_tool
 from ignite.providers.config import env_test_mode, get_provider
 from ignite.responder import Responder
+from ignite.retrieval.base import Retriever
 from ignite.retrieval.embed import FastEmbedEmbedder, HashEmbedder
+from ignite.retrieval.hybrid import HybridRetriever
 from ignite.retrieval.knowledge import VectorRetriever, load_snippets
+from ignite.retrieval.sparse import BM25Retriever
 
 
-def _build_retriever(test_mode: bool) -> VectorRetriever:
+def _build_retriever(test_mode: bool) -> Retriever:
+    """Hybrid retriever: dense (vector) + sparse (BM25), fused with RRF."""
+    snippets = load_snippets()
     embedder = HashEmbedder() if test_mode else FastEmbedEmbedder()
-    retriever = VectorRetriever(embedder)
-    retriever.ingest(load_snippets())
-    return retriever
+    dense = VectorRetriever(embedder)
+    dense.ingest(snippets)
+    sparse = BM25Retriever(snippets)
+    return HybridRetriever(dense, sparse)
 
 
 def build_responder(test_mode: bool | None = None) -> Responder:
