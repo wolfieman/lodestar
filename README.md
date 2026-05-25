@@ -14,6 +14,8 @@
 ![License](https://img.shields.io/badge/license-Polyform%20Noncommercial%201.0.0-orange)
 ![HP FOWA 2024](https://img.shields.io/badge/HP%20FOWA%202024-%F0%9F%A5%87%20First%20Place-gold)
 
+![Lodestar — an agentic, RAG-grounded HBCU career assistant (2026), evolved from the first-place IgniteAI custom GPT (2024)](assets/lodestar-overview.png)
+
 ---
 
 > **At a glance:** model-agnostic LLM layer (Claude · OpenAI) · **hybrid RAG** (BM25 + LanceDB
@@ -92,6 +94,9 @@ and synthesized this with `claude-sonnet-4-6`. Generate your own recording — s
 | **Evals** | **LLM-as-judge** harness scoring relevance/accuracy/actionability/safety (`evals/`) |
 | **Security** | OWASP-LLM-Top-10 mapping, prompt-injection guardrail, PII detection (`safety.py`, `docs/security.md`) |
 | **Resilience** | graceful **BM25 fallback** if the embedding model can't be fetched; full **offline test mode** |
+
+> **Latest LLM-as-judge eval** (Claude-judged, 4 representative queries): relevance, accuracy,
+> and actionability **5/5**; safety **4–5/5**. Raw runs in [`evals/runs/`](evals/runs/).
 
 ## The two tracks (one repo)
 
