@@ -56,10 +56,11 @@ class KnowledgeBase:
             return []
         scored: list[tuple[int, Snippet]] = []
         for snippet in self.snippets:
-            title_tokens = _tokenize(snippet.title)
-            body_tokens = _tokenize(f"{snippet.content} {snippet.category}")
+            title_hits = len(query_tokens & _tokenize(snippet.title))
+            doc = _tokenize(f"{snippet.content} {snippet.category}")
+            body_hits = len(query_tokens & doc)
             # Title matches are the strongest topical signal, so weight them higher.
-            score = 2 * len(query_tokens & title_tokens) + len(query_tokens & body_tokens)
+            score = 2 * title_hits + body_hits
             if score:
                 scored.append((score, snippet))
         scored.sort(key=lambda pair: (-pair[0], pair[1].id))

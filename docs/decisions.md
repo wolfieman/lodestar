@@ -47,8 +47,9 @@ GPL `LICENSE`, or `tests/check_quota_limit.py`.
 
 ## 5. Tooling
 
-- **Python pinned to 3.12** (not ev-pulse-nc's 3.14) to avoid wheel/compatibility gaps in
-  `openai` / `cryptography`.
+- **Python:** v1 reproduction pinned 3.12; the **Track B rebuild bumped to 3.14** (matching
+  the OS install / ev-pulse) after verifying all rebuild deps have 3.14 wheels and import
+  cleanly: `anthropic` 0.104, `mcp`, `lancedb` 0.30, `fastembed` 0.8. No fallback needed.
 - **uv** for environment + dependency management; **ruff** (line-length 88, rules E/F/W/I);
   **pytest** with `unit` / `contract` / `integration` markers.
 

@@ -42,8 +42,10 @@ Set `OPENAI_API_KEY` in `.env` and `TEST_MODE=false` for real model responses.
 
 - ✅ **Track A — as-shipped reproduction:** runnable CLI (`uv run lodestar`), tested, lint-clean;
   IgniteAI product spec captured in `product/`; case study + competition record written.
-- 🔜 **Track B — modernized v2:** a 2026 rebuild (current models, real retrieval/agentic tools,
-  the integrations the team designed). To be designed — see [`docs/roadmap.md`](docs/roadmap.md).
+- ✅ **Track B — modernized rebuild** (`src/ignite/`, CLI `ignite`): model-agnostic
+  (default Claude) agentic chatbot with hybrid RAG (LanceDB + BM25), an **MCP server**, and
+  LLM-as-judge evals. `uv run ignite` · `uv run python -m ignite.mcp_server` ·
+  see [`docs/roadmap.md`](docs/roadmap.md) and [`docs/ibm-curriculum-mapping.md`](docs/ibm-curriculum-mapping.md).
 
 ## Credits & license
 
