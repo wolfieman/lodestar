@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from ignite.providers.base import LLMProvider, Message
+
+if TYPE_CHECKING:
+    from ignite.agents.tools import Tool
 
 
 class MockProvider(LLMProvider):
@@ -20,4 +25,24 @@ class MockProvider(LLMProvider):
         return (
             "[TEST_MODE] IgniteAI (HBCU career coach) would answer "
             f"{last!r} [{grounded}]."
+        )
+
+    def run_tools(
+        self,
+        system: str,
+        messages: list[Message],
+        tools: list[Tool],
+        *,
+        max_tokens: int = 1024,
+        max_iters: int = 5,
+    ) -> str:
+        """Deterministically invoke the first tool once, then summarize its result."""
+        last = messages[-1]["content"] if messages else ""
+        if not tools:
+            return f"[TEST_MODE agent] no tools available; echo: {last!r}"
+        tool = tools[0]
+        result = tool.func(query=str(last))
+        return (
+            f"[TEST_MODE agent] called tool '{tool.name}'. "
+            f"Result preview: {result[:160]}"
         )

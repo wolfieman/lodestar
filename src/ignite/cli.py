@@ -14,12 +14,12 @@ from dotenv import load_dotenv
 def main() -> int:
     """Entry point registered as the ``ignite`` console script."""
     load_dotenv()
-    from ignite.app import build_responder
+    from ignite.app import build_agent
     from ignite.providers.config import env_test_mode
 
-    bot = build_responder()
+    bot = build_agent()
     mode = "offline mock" if env_test_mode() else f"live ({bot.provider.model})"
-    print(f"IgniteAI (rebuild) — {mode}. Type 'quit' to exit.")
+    print(f"IgniteAI (rebuild, agentic) — {mode}. Type 'quit' to exit.")
     try:
         while True:
             user = input("\nYou: ").strip()
@@ -27,7 +27,7 @@ def main() -> int:
                 break
             if not user:
                 continue
-            print(f"\nIgniteAI: {bot.respond(user)}")
+            print(f"\nIgniteAI: {bot.run(user)}")
     except (EOFError, KeyboardInterrupt):
         print()
     return 0

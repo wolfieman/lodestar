@@ -8,7 +8,7 @@ import os
 
 import pytest
 
-from ignite.app import build_responder
+from ignite.app import build_agent, build_responder
 from ignite.retrieval.embed import FastEmbedEmbedder
 from ignite.retrieval.knowledge import VectorRetriever, load_snippets
 
@@ -33,4 +33,17 @@ def test_fastembed_semantic_retrieval():
 def test_live_claude_response_is_nonempty():
     bot = build_responder(test_mode=False)
     reply = bot.respond("Give one tip for an HBCU student's resume.")
+    assert isinstance(reply, str) and reply.strip()
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    not os.getenv("ANTHROPIC_API_KEY") or _TEST_MODE,
+    reason="requires ANTHROPIC_API_KEY and TEST_MODE=false",
+)
+def test_live_agent_tool_use():
+    agent = build_agent(test_mode=False)
+    reply = agent.run(
+        "Find scholarships for HBCU STEM students and outline next steps."
+    )
     assert isinstance(reply, str) and reply.strip()
