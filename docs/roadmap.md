@@ -11,26 +11,32 @@ A faithful, runnable mirror of the **2024 IgniteAI custom GPT** that won HP FOWA
 - **Purpose:** an honest record of what shipped. This track stays intentionally simple,
   matching the original product. It will be tagged (e.g. `v1-reproduction`) when frozen.
 
-## Track B — Modernized v2 (2026) — to design
+## Track B — Modernized rebuild (2026) ✅ built
 
-Realize the ambitious architecture the team *designed but never built* (Airtable, Make.com,
-Perplexity, multi-source data, FERPA/GDPR), using current AI. Candidate scope (to be set in
-a dedicated design pass):
+The modern rebuild in `src/ignite/` (CLI `ignite`), realizing the architecture the team
+*designed but never built*, with current AI:
 
-- Current frontier model(s); **model-agnostic** provider layer.
-- **Real retrieval** (embeddings/vector search) and/or an **agentic** tool-using design.
-- Implement the **data integrations** the docs envisioned (real career/scholarship/internship
-  sources, web search).
-- **Evals** to demonstrate answer quality, not just that it runs.
-- Optional **frontend + deployment**.
+- **Model-agnostic provider layer** (`providers/`), default **Claude** (`claude-sonnet-4-6`,
+  prompt caching); optional OpenAI adapter; offline mock for tests/TEST_MODE.
+- **Hybrid RAG** (`retrieval/`): fastembed embeddings + **LanceDB** vector store + **BM25**
+  sparse, fused with Reciprocal Rank Fusion.
+- **Agentic** tool use (`agents/`): keyword router → Claude native tool-use loop with
+  `retrieve_knowledge` + `web_search` tools.
+- **MCP server** (`mcp_server.py`) exposing IgniteAI to Claude Desktop / MCP clients.
+- **LLM-as-judge evals** (`evals/`) + **security** (`safety.py`; `docs/security.md`: OWASP
+  LLM Top-10 + FERPA).
+- Python 3.14, uv, ruff, pytest; offline-runnable via `TEST_MODE` (mock + hash embeddings).
+- Concept mapping to the IBM curriculum: `docs/ibm-curriculum-mapping.md`.
+
+**Deferred (separate effort):** FastAPI + web chat UI + deployment.
 
 **Purpose:** the forward-looking portfolio piece — shows growth from the 2024 prototype.
 
 ## How the tracks coexist
 
-The v1 reproduction is kept (frozen/tagged) as the baseline; v2 is built as a distinct,
-clearly-labeled track in the same repo so the evolution is visible side by side. The exact
-package/dir layout for v2 is decided at the start of its design pass.
+The v1 reproduction is kept (tagged `v1-reproduction`) in `src/lodestar/` (CLI `lodestar`);
+the v2 rebuild lives alongside it in `src/ignite/` (CLI `ignite`), so the evolution is visible
+side by side in one repo.
 
 ## Narrative
 

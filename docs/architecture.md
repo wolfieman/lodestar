@@ -48,3 +48,23 @@ conversational behavior:
 
 Out of scope locally: the web/mobile frontend, Perplexity augmentation, Airtable, Make.com
 automation, and cloud auto-scaling. These remain documented here as the production design.
+
+## What the Track B rebuild implements
+
+The 2026 rebuild (`src/ignite/`) advances much of this design into real, runnable code
+(see `roadmap.md` and `ibm-curriculum-mapping.md`):
+
+- **Chatbot engine** → model-agnostic provider layer, default Claude (`providers/`), replacing
+  the single hard-coded model.
+- **Knowledge grounding** → real **hybrid retrieval**: fastembed embeddings in a LanceDB
+  vector store, fused with BM25 (`retrieval/`) — the dense/sparse/hybrid strategies, not
+  keyword-only.
+- **Agentic orchestration** → a router + tool-use loop (`agents/`) where the model decides
+  when to retrieve or search — the "data integration via tools" idea, realized.
+- **Integration surface** → IgniteAI is exposed as an **MCP server** (`mcp_server.py`), the
+  modern vendor-neutral way to connect tools/clients (in place of bespoke API glue).
+- **Governance** → LLM-as-judge evals (`evals/`) and an OWASP/FERPA security posture
+  (`security.md`).
+
+Still deferred to a production pass: the web/mobile frontend + deployment, a live
+(sandboxed) search backend, Airtable/Make.com, and cloud auto-scaling.
