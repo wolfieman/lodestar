@@ -2,7 +2,7 @@
 
 IgniteAI serves students, so it was designed with student-data protection in mind. This
 note records the intended posture; the reference implementation demonstrates the principles
-at small scale (see `src/lodestar/privacy.py`).
+at small scale (see `src/ignite/privacy.py`).
 
 ## Principles
 
@@ -15,7 +15,7 @@ at small scale (see `src/lodestar/privacy.py`).
 
 ## In the reference implementation
 
-`src/lodestar/privacy.py` provides Fernet symmetric encryption helpers as a concrete
+`src/ignite/privacy.py` provides Fernet symmetric encryption helpers as a concrete
 demonstration of encrypting sensitive fields. It is illustrative, not a production data
 pipeline; the production design (Airtable-backed, access-controlled) is described in
 `architecture.md`.

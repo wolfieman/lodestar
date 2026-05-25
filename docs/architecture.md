@@ -39,11 +39,11 @@ simplified subset — see [decisions.md](decisions.md) and [reference-vs-product
 The Python reference implementation is a **local, single-user CLI** that captures the core
 conversational behavior:
 
-- **Chatbot engine** → OpenAI `gpt-4o-mini` (`src/lodestar/chatbot.py`).
+- **Chatbot engine** → OpenAI `gpt-4o-mini` (`src/ignite/chatbot.py`).
 - **Knowledge grounding** → a lightweight retrieval layer over a local
-  academic/career/internship knowledge base (`src/lodestar/knowledge.py`), standing in for
+  academic/career/internship knowledge base (`src/ignite/knowledge.py`), standing in for
   the Airtable-backed data integration layer.
-- **Data handling** → a Fernet encryption helper (`src/lodestar/privacy.py`) demonstrating
+- **Data handling** → a Fernet encryption helper (`src/ignite/privacy.py`) demonstrating
   the FERPA/GDPR posture.
 
 Out of scope locally: the web/mobile frontend, Perplexity augmentation, Airtable, Make.com
@@ -51,7 +51,7 @@ automation, and cloud auto-scaling. These remain documented here as the producti
 
 ## What the Track B rebuild implements
 
-The 2026 rebuild (`src/ignite/`) advances much of this design into real, runnable code
+The 2026 rebuild (`src/lodestar/`) advances much of this design into real, runnable code
 (see `roadmap.md` and `ibm-curriculum-mapping.md`):
 
 - **Chatbot engine** → model-agnostic provider layer, default Claude (`providers/`), replacing
@@ -61,7 +61,7 @@ The 2026 rebuild (`src/ignite/`) advances much of this design into real, runnabl
   keyword-only.
 - **Agentic orchestration** → a router + tool-use loop (`agents/`) where the model decides
   when to retrieve or search — the "data integration via tools" idea, realized.
-- **Integration surface** → IgniteAI is exposed as an **MCP server** (`mcp_server.py`), the
+- **Integration surface** → Lodestar is exposed as an **MCP server** (`mcp_server.py`), the
   modern vendor-neutral way to connect tools/clients (in place of bespoke API glue).
 - **Governance** → LLM-as-judge evals (`evals/`) and an OWASP/FERPA security posture
   (`security.md`).

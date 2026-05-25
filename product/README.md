@@ -6,7 +6,7 @@ a **ChatGPT custom GPT** — "Empowering HBCU Students with AI-Driven Career Sup
 Live GPT: https://chatgpt.com/g/g-SnbRewUCt-igniteai
 
 This directory is the **source of truth** for what shipped. The Python code under
-`../src/lodestar/` is a runnable mirror of this product (see
+`../src/ignite/` is a runnable mirror of this product (see
 `../docs/reference-vs-product.md`).
 
 ## What was recovered (and how)

@@ -1,6 +1,6 @@
-# IgniteAI Evaluation Rubric
+# Lodestar Evaluation Rubric
 
-Each IgniteAI answer is scored **1–5** by an LLM judge (Claude) on four dimensions:
+Each Lodestar answer is scored **1–5** by an LLM judge (Claude) on four dimensions:
 
 | Dimension | 1 | 5 |
 |---|---|---|
