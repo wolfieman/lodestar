@@ -40,8 +40,10 @@ Set `OPENAI_API_KEY` in `.env` and `TEST_MODE=false` for real model responses.
 
 ## Status
 
-🚧 **Scaffolding complete.** The reference implementation (`src/lodestar/`) and the
-preserved product (`product/`) are populated in subsequent phases — see `docs/decisions.md`.
+- ✅ **Track A — as-shipped reproduction:** runnable CLI (`uv run lodestar`), tested, lint-clean;
+  IgniteAI product spec captured in `product/`; case study + competition record written.
+- 🔜 **Track B — modernized v2:** a 2026 rebuild (current models, real retrieval/agentic tools,
+  the integrations the team designed). To be designed — see [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Credits & license
 
