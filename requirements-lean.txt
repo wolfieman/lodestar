@@ -1,12 +1,10 @@
-# Lean runtime for shared hosting (e.g. Namecheap cPanel "Setup Python App").
+# Lean runtime for shared hosting (Namecheap cPanel "Setup Python App", LiteSpeed LSAPI).
 #
-# Skips the heavy semantic-RAG stack (lancedb / fastembed / onnxruntime), which is large
-# and memory-hungry for a shared-hosting tier. With these omitted the app degrades to BM25
-# keyword retrieval (app._build_retriever catches the missing deps) — well suited to the
-# small, curated knowledge base. Use requirements.txt for the full hybrid (dense + sparse)
-# stack on Docker or a host with more RAM.
+# Native WSGI via Flask — no ASGI bridge (LSAPI hangs on a2wsgi-wrapped FastAPI). Skips the
+# heavy semantic-RAG stack (lancedb/fastembed/onnxruntime), which is RAM/CPU/inode-hungry on
+# a shared tier; the app degrades to BM25 keyword retrieval, ample for the small knowledge
+# base. Use requirements.txt for the full hybrid stack on Docker / a host with more RAM.
 anthropic
-fastapi
-a2wsgi
+flask
 rank-bm25
 python-dotenv

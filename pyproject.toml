@@ -22,6 +22,7 @@ dependencies = [
     "rank-bm25>=0.2",
     "fastapi>=0.115",
     "uvicorn>=0.30",
+    "flask>=3.0",
     # IgniteAI reproduction (src/ignite): the 2024 original was OpenAI-based
     "openai>=1.0",
 ]
