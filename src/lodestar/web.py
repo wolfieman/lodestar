@@ -3,17 +3,22 @@
 Run locally with ``uv run lodestar-web``. ``TEST_MODE=true`` (default) serves offline
 mock answers; set ``ANTHROPIC_API_KEY`` and ``TEST_MODE=false`` for live Claude. See
 ``docs/deploy.md`` to deploy.
+
+A public live-key deployment is protected by a per-IP rate limit
+(``RATE_LIMIT_PER_MIN``, default 12) and a max message length.
 """
 
 from __future__ import annotations
 
 import os
+import time
+from collections import defaultdict, deque
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -22,6 +27,9 @@ _INDEX_HTML = (
     Path(__file__).parent / "static" / "index.html"
 ).read_text(encoding="utf-8")
 _runtime: tuple | None = None
+
+_RATE_LIMIT = int(os.getenv("RATE_LIMIT_PER_MIN", "12"))
+_hits: dict[str, deque] = defaultdict(deque)
 
 
 def _runtime_get() -> tuple:
@@ -35,8 +43,22 @@ def _runtime_get() -> tuple:
     return _runtime
 
 
+def _rate_limit(request: Request) -> None:
+    """Reject an IP exceeding ``RATE_LIMIT_PER_MIN`` requests in the last 60 seconds."""
+    ip = request.client.host if request.client else "?"
+    now = time.time()
+    recent = _hits[ip]
+    while recent and now - recent[0] > 60:
+        recent.popleft()
+    if len(recent) >= _RATE_LIMIT:
+        raise HTTPException(
+            status_code=429, detail="Rate limit exceeded; try again shortly."
+        )
+    recent.append(now)
+
+
 class ChatIn(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=1000)
 
 
 class ChatOut(BaseModel):
@@ -49,8 +71,9 @@ def health() -> dict[str, str]:
 
 
 @app.post("/api/chat", response_model=ChatOut)
-def chat(body: ChatIn) -> ChatOut:
-    """Answer one message with a fresh (stateless) agent over the shared runtime."""
+def chat(body: ChatIn, request: Request) -> ChatOut:
+    """Answer one message with a fresh (stateless) agent; rate-limited per IP."""
+    _rate_limit(request)
     from lodestar.agents.agent import IgniteAgent
 
     provider, tools = _runtime_get()

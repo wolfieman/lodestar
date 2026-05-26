@@ -1,0 +1,14 @@
+# Runtime dependencies for a cPanel / Passenger (WSGI) deploy of the Lodestar web UI.
+# Local development and CI use uv + pyproject.toml + uv.lock; this unpinned list is for
+# cPanel "Setup Python App" pip installs (resolves against the host's Python, e.g. 3.13).
+anthropic
+mcp
+lancedb
+fastembed
+rank-bm25
+fastapi
+uvicorn
+openai
+cryptography
+python-dotenv
+a2wsgi
