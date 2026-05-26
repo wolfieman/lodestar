@@ -9,13 +9,13 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import lancedb
-
 
 class VectorStore:
     """A thin wrapper over a LanceDB table holding embedded knowledge snippets."""
 
     def __init__(self, path: Path | None = None, table: str = "knowledge") -> None:
+        import lancedb  # lazy: a lean (BM25-only) deploy can omit this heavy dep
+
         self.path = str(path or Path(tempfile.mkdtemp(prefix="lodestar-lancedb-")))
         self.table = table
         self._db = lancedb.connect(self.path)

@@ -1,0 +1,12 @@
+# Lean runtime for shared hosting (e.g. Namecheap cPanel "Setup Python App").
+#
+# Skips the heavy semantic-RAG stack (lancedb / fastembed / onnxruntime), which is large
+# and memory-hungry for a shared-hosting tier. With these omitted the app degrades to BM25
+# keyword retrieval (app._build_retriever catches the missing deps) — well suited to the
+# small, curated knowledge base. Use requirements.txt for the full hybrid (dense + sparse)
+# stack on Docker or a host with more RAM.
+anthropic
+fastapi
+a2wsgi
+rank-bm25
+python-dotenv
