@@ -54,8 +54,10 @@ embeddings) — no key required.
 
 ## See it work
 
-<details open>
-<summary><b>Live Claude run — “How do I find scholarships for HBCU STEM students?”</b></summary>
+![Lodestar demo — the agentic CLI answering a scholarship question live (real Claude + RAG)](assets/lodestar-demo.gif)
+
+<details>
+<summary><b>Transcript — “How do I find scholarships for HBCU STEM students?”</b></summary>
 
 ```text
 $ uv run lodestar          # TEST_MODE=false, ANTHROPIC_API_KEY set
