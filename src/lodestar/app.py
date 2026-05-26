@@ -21,9 +21,9 @@ from lodestar.retrieval.sparse import BM25Retriever
 def _build_retriever(test_mode: bool) -> Retriever:
     """Hybrid retriever (dense vector + sparse BM25, fused with RRF).
 
-    Degrades gracefully to BM25-only if the dense stack is unavailable — the embedding
-    model can't load (offline) *or* the vector deps aren't installed (a lean shared-hosting
-    deploy) — so the app always runs, in both mock and live modes.
+    Degrades to BM25-only when the dense stack is unavailable: the embedding model can't
+    load (offline), or the vector deps aren't installed (lean deploy). Runs in both mock
+    and live modes.
     """
     snippets = load_snippets()
     sparse = BM25Retriever(snippets)

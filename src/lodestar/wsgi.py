@@ -1,13 +1,13 @@
 """Native WSGI app (Flask) for Passenger / LiteSpeed LSAPI shared-hosting deploys.
 
-The FastAPI app in ``web.py`` is ideal under uvicorn/Docker (ASGI), but LiteSpeed's LSAPI
-hangs on the ASGI-to-WSGI bridge. This Flask app exposes the same routes natively over WSGI
-(no bridge), reusing the same agent and single-page UI. The app is fully synchronous (the
-Anthropic SDK call is blocking), so nothing is lost by dropping ASGI here.
+The FastAPI app in ``web.py`` is ideal under uvicorn/Docker (ASGI), but LiteSpeed's
+LSAPI hangs on the ASGI-to-WSGI bridge. This Flask app exposes the same routes natively
+over WSGI (no bridge), reusing the same agent and single-page UI. It runs synchronously
+(the Anthropic SDK call blocks), so nothing is lost by dropping ASGI here.
 
 ``TEST_MODE=true`` (default) serves offline mock answers; set ``ANTHROPIC_API_KEY`` and
-``TEST_MODE=false`` for live Claude. A public live-key deploy is guarded by a per-IP rate
-limit (``RATE_LIMIT_PER_MIN``, default 12) and a max message length.
+``TEST_MODE=false`` for live Claude. A public live-key deploy is guarded by a per-IP
+rate limit (``RATE_LIMIT_PER_MIN``, default 12) and a max message length.
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ def _runtime_get() -> tuple:
 
 
 def _rate_limited(ip: str) -> bool:
-    """Whether ``ip`` exceeded ``RATE_LIMIT_PER_MIN`` requests in the last 60 seconds."""
+    """True if ``ip`` exceeded RATE_LIMIT_PER_MIN requests in the last 60s."""
     now = time.time()
     recent = _hits[ip]
     while recent and now - recent[0] > 60:

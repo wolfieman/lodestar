@@ -11,4 +11,6 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from lodestar.wsgi import app as application
+from lodestar.wsgi import app
+
+application = app
