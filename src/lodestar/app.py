@@ -21,22 +21,19 @@ from lodestar.retrieval.sparse import BM25Retriever
 def _build_retriever(test_mode: bool) -> Retriever:
     """Hybrid retriever (dense vector + sparse BM25, fused with RRF).
 
-    Degrades gracefully to BM25-only if the embedding model can't be loaded (e.g. no
-    network to download it), so the app always runs.
+    Degrades gracefully to BM25-only if the dense stack is unavailable — the embedding
+    model can't load (offline) *or* the vector deps aren't installed (a lean shared-hosting
+    deploy) — so the app always runs, in both mock and live modes.
     """
     snippets = load_snippets()
     sparse = BM25Retriever(snippets)
-    if test_mode:
-        dense = VectorRetriever(HashEmbedder())
-        dense.ingest(snippets)
-        return HybridRetriever(dense, sparse)
     try:
-        dense = VectorRetriever(FastEmbedEmbedder())
+        dense = VectorRetriever(HashEmbedder() if test_mode else FastEmbedEmbedder())
         dense.ingest(snippets)
         return HybridRetriever(dense, sparse)
-    except Exception as exc:  # model-load/network failure → degrade, don't crash
+    except Exception as exc:  # missing vector deps / model-load failure → degrade
         print(
-            f"[lodestar] embedding model unavailable ({type(exc).__name__}); "
+            f"[lodestar] dense retrieval unavailable ({type(exc).__name__}); "
             "using BM25-only retrieval."
         )
         return sparse
