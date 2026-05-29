@@ -22,8 +22,10 @@ to those rather than duplicating content here.
 ## Working rules (project-specific)
 
 - **Clean-room:** the reference implementation is rewritten fresh from the team's own
-  architecture docs + the IgniteAI spec. Do **not** copy the original GPL-3.0 team code.
-- **Shell:** use **git bash**, not PowerShell.
+  architecture docs + the IgniteAI spec. Do **not** copy the original GPL-3.0 team code —
+  this keeps the rewrite clean-room and avoids inheriting GPL-3.0 licensing obligations.
+- **Shell:** use **git bash**, not PowerShell (owner's cross-project standard; the repo's
+  POSIX tooling and hooks assume a bash environment).
 - **Secrets:** never commit `.env` or API keys; `_staging/` is gitignored.
 - **Attribution:** IgniteAI was a team effort — credit HP FOWA Team 4 (see `NOTICE.md`).
 
