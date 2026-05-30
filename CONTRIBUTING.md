@@ -24,7 +24,7 @@
 
 ## Commits
 
-Format: `[LODESTAR][TYPE] short description` (≤50 chars for the description).
+Format: `[LODESTAR][TYPE] imperative subject` (≤72 chars, per the orchestrator master convention).
 Types: `FEAT`, `FIX`, `DOCS`, `META`, `REFAC`, `CHORE`, `TEST`.
 Full convention: `../orchestrator/.claude/CLAUDE.md`. **Never** add AI co-authorship trailers.
 
