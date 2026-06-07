@@ -42,6 +42,13 @@ The v1 reproduction is kept (tagged `v1-reproduction`) in `src/ignite/` (CLI `ig
 the v2 rebuild lives alongside it in `src/lodestar/` (CLI `lodestar`), so the evolution is visible
 side by side in one repo.
 
+## Remote MCP server (in progress — June 2026)
+
+The Python stack already ships a local MCP server (`mcp_server.py`). Next: a **hosted
+MCP endpoint on the Cloudflare Worker** (`lodestar.sanyer.org`), so any MCP client can
+connect to Lodestar's retrieval tools without cloning the repo (Cloudflare agents
+SDK + Durable Objects). Ships through the same Git-connected deploy pipeline.
+
 ## Distribution & release (planned)
 
 Lodestar is a runnable tool/service (CLI · web UI · MCP server), which makes it a genuine
