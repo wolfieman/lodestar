@@ -17,15 +17,20 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+from lodestar.safety import PII_BLOCK_DETAIL, detect_pii
 
 load_dotenv()
 
-app = FastAPI(title="Lodestar", description="Agentic HBCU career-advice assistant")
-_INDEX_HTML = (
-    Path(__file__).parent / "static" / "index.html"
-).read_text(encoding="utf-8")
+app = FastAPI(
+    title="Lodestar", description="Career help for HBCU students — hosted chat API."
+)
+_STATIC_DIR = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
+_INDEX_HTML = (_STATIC_DIR / "index.html").read_text(encoding="utf-8")
 _runtime: tuple | None = None
 
 _RATE_LIMIT = int(os.getenv("RATE_LIMIT_PER_MIN", "12"))
@@ -74,6 +79,8 @@ def health() -> dict[str, str]:
 def chat(body: ChatIn, request: Request) -> ChatOut:
     """Answer one message with a fresh (stateless) agent; rate-limited per IP."""
     _rate_limit(request)
+    if detect_pii(body.message):
+        raise HTTPException(status_code=400, detail=PII_BLOCK_DETAIL)
     from lodestar.agents.agent import IgniteAgent
 
     provider, tools = _runtime_get()
@@ -83,6 +90,11 @@ def chat(body: ChatIn, request: Request) -> ChatOut:
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     return _INDEX_HTML
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon() -> FileResponse:
+    return FileResponse(_STATIC_DIR / "favicon.ico")
 
 
 def main() -> None:

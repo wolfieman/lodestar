@@ -14,6 +14,13 @@ _PATTERNS: dict[str, re.Pattern[str]] = {
     "phone": re.compile(r"\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b"),
 }
 
+#: Exact user-facing message for the hosted-chat PII input gate. Parity-tested across
+#: ports of the hosted tier — do not rephrase.
+PII_BLOCK_DETAIL = (
+    "That looks like it includes personal info (an email, phone number, or SSN). "
+    "Lodestar never needs it — take it out and send again."
+)
+
 
 def detect_pii(text: str) -> list[str]:
     """Return the kinds of PII detected in ``text`` (empty list if none)."""

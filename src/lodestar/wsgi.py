@@ -20,6 +20,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request
 
+from lodestar.safety import PII_BLOCK_DETAIL, detect_pii
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -65,6 +67,11 @@ def index():
     return Response(_INDEX_HTML, mimetype="text/html")
 
 
+@app.get("/favicon.ico")
+def favicon():
+    return app.send_static_file("favicon.ico")
+
+
 @app.post("/api/chat")
 def chat():
     """Answer one message with a fresh (stateless) agent; rate-limited per IP."""
@@ -75,6 +82,8 @@ def chat():
     message = (data.get("message") or "").strip()
     if not message or len(message) > 1000:
         return jsonify(detail="Message must be 1-1000 characters."), 400
+    if detect_pii(message):
+        return jsonify(detail=PII_BLOCK_DETAIL), 400
     from lodestar.agents.agent import IgniteAgent
 
     provider, tools = _runtime_get()

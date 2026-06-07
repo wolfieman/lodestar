@@ -66,3 +66,24 @@ GPL `LICENSE`, or `tests/check_quota_limit.py`.
   and is included with credit.
 - **Public release of team-derived material requires HP FOWA Team 4 consent** — the repo
   stays private until then (see `NOTICE.md`).
+
+## 8. Hosted chat: PII input gate + UI voice
+
+- **PII is blocked on input.** The hosted chat (`web.py` / `wsgi.py`) rejects a message
+  containing an obvious SSN, email, or phone number with a friendly 400
+  (`PII_BLOCK_DETAIL` in `safety.py`) *before any model call*, so the UI's privacy copy
+  is true by construction. The reply-side check stays a **post-hoc advisory** — under
+  streaming, tokens already sent can't be retracted, so blocking there would be theater.
+- **UI chrome speaks as the tool, in the owner's register** — short declaratives, plain
+  language, no inspirational filler, no tech vocabulary ("agentic", "RAG") in
+  student-facing copy. This is a **scoped adaptation** of the first-person-voice rule:
+  bio claims and self-descriptors stay on the owner's personal site, never in product
+  chrome.
+- **Bound copy strings** (single source of truth for audits; the canonical set lives in
+  `static/index.html`). Beyond the core table (title, subtitle, greeting, chips,
+  placeholder, send, thinking, error, empty-reply, privacy hint), five state-machine
+  strings are bound here: PII advisory *"A quick note: leave out personal info like
+  emails, phone numbers, or SSNs — Lodestar never needs them."*; truncation note *"That
+  answer hit the length limit and may be cut off — ask a follow-up for the rest."*;
+  dropped-stream notice *"The connection dropped before the answer finished."*;
+  scroll pill *"Jump to latest"*; retry button *"Try again"*.
