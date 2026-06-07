@@ -7,9 +7,16 @@ any container host works.
 ## Cloudflare Workers (the live hosted demo)
 
 The production deploy at **lodestar.sanyer.org** is the TypeScript Worker in
-[`worker/`](../worker/) — a single-call port of the lean build (BM25 retrieval →
-one **streaming** Claude Haiku call; no tool loop). It is parity-tested against the
-Python source (`tests/test_worker_parity.py`, `worker/test/`).
+[`worker/`](../worker/) — the **full agentic pipeline**: keyword router hint →
+Claude's native tool-use loop (`retrieve_knowledge`, `web_search` stub) → hybrid
+retrieval (Workers AI `bge-small-en-v1.5` embeddings + a seeded **Vectorize** index,
+RRF-fused with BM25; degrades to BM25-only if the dense side fails) → the final
+answer **streamed** token-by-token. It is parity-tested against the Python source
+(`tests/test_worker_parity.py`, `worker/test/` — router, tools, RRF, prompts, BM25).
+
+After editing `data/knowledge.json`, re-seed the vector index:
+`CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… node scripts/seed-vectorize.mjs`
+(from `worker/`; token needs Workers AI:Read + Vectorize:Edit).
 
 ```bash
 cd worker
