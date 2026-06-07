@@ -13,9 +13,9 @@
 ![MCP](https://img.shields.io/badge/protocol-MCP-111111)
 ![License](https://img.shields.io/badge/license-Polyform%20Noncommercial%201.0.0-orange)
 ![HP FOWA 2024](https://img.shields.io/badge/HP%20FOWA%202024-%F0%9F%A5%87%20First%20Place-gold)
-[![Live demo](https://img.shields.io/badge/live%20demo-lodestar.sanyer.org-2ea44f?logo=cloudflare&logoColor=white)](https://lodestar.sanyer.org)
+[![Live](https://img.shields.io/badge/live-lodestar.sanyer.org-2ea44f?logo=cloudflare&logoColor=white)](https://lodestar.sanyer.org)
 
-**▶ Live demo → [lodestar.sanyer.org](https://lodestar.sanyer.org)** — chat with Lodestar live (Claude Haiku, streaming). *The hosted demo runs the full agentic pipeline on a Cloudflare Worker: router → Claude tool-use loop → hybrid RAG (Workers AI `bge-small` embeddings + Vectorize, RRF-fused with BM25), parity-tested against the Python stack below, which also runs locally and in Docker (LanceDB + fastembed + MCP).*
+**▶ Use Lodestar live → [lodestar.sanyer.org](https://lodestar.sanyer.org)** — chat with Lodestar (Claude Haiku, streaming). *The hosted build runs the full agentic pipeline on a Cloudflare Worker: router → Claude tool-use loop → hybrid RAG (Workers AI `bge-small` embeddings + Vectorize, RRF-fused with BM25), parity-tested against the Python stack below, which also runs locally and in Docker (LanceDB + fastembed + MCP).*
 
 ![Lodestar — an agentic, RAG-grounded HBCU career assistant (2026), evolved from the first-place IgniteAI custom GPT (2024)](assets/lodestar-overview.png)
 

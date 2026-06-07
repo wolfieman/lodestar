@@ -4,7 +4,7 @@
 runs the agent, `GET /health` is a probe. The repo ships a [`Dockerfile`](../Dockerfile) so
 any container host works.
 
-## Cloudflare Workers (the live hosted demo)
+## Cloudflare Workers (the live hosted build)
 
 The production deploy at **lodestar.sanyer.org** is the TypeScript Worker in
 [`worker/`](../worker/) — the **full agentic pipeline**: keyword router hint →
