@@ -4,6 +4,27 @@
 runs the agent, `GET /health` is a probe. The repo ships a [`Dockerfile`](../Dockerfile) so
 any container host works.
 
+## Cloudflare Workers (the live hosted demo)
+
+The production deploy at **lodestar.sanyer.org** is the TypeScript Worker in
+[`worker/`](../worker/) — a single-call port of the lean build (BM25 retrieval →
+one **streaming** Claude Haiku call; no tool loop). It is parity-tested against the
+Python source (`tests/test_worker_parity.py`, `worker/test/`).
+
+```bash
+cd worker
+npm ci
+npx wrangler dev                       # local, offline (TEST_MODE=true via .dev.vars)
+npx wrangler deploy                    # publish (the custom domain rides wrangler.jsonc routes)
+npx wrangler secret put ANTHROPIC_API_KEY   # one-time; never in vars or files
+```
+
+- The assets binding serves `src/lodestar/static/` (the same `index.html` the Python
+  apps use); `/static/*` requests are rewritten in `worker/src/index.ts` so the page
+  is host-agnostic.
+- **Rollback:** re-create the DNS A record `lodestar → <shared-host IP>` (DNS-only)
+  and the prior cPanel deploy below resumes serving immediately.
+
 ## Run locally
 
 ```bash
@@ -43,7 +64,7 @@ TEST_MODE=false` → `fly deploy`.
   message length; a live-key public demo should also have a **spend limit** set in the provider
   console (documented as a hardening step in `security.md`).
 
-## Deploy to Namecheap cPanel (shared hosting)
+## Deploy to Namecheap cPanel (shared hosting) — standby/rollback path
 
 cPanel runs Python apps over WSGI via Phusion Passenger ("Setup Python App"). Lodestar's ASGI
 app is wrapped by [`passenger_wsgi.py`](../passenger_wsgi.py) (via `a2wsgi`). Use the **lean**

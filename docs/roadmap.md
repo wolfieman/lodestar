@@ -29,7 +29,9 @@ The modern rebuild in `src/lodestar/` (CLI `lodestar`), realizing the architectu
 - Concept mapping to the IBM curriculum: `docs/ibm-curriculum-mapping.md`.
 
 **Web UI & deploy:** ✅ built — FastAPI single-page chat (`lodestar-web`), containerized
-(`Dockerfile`), deploy-ready; live demo at lodestar.sanyer.org.
+(`Dockerfile`), deploy-ready. The **live demo at lodestar.sanyer.org** is a lean
+**Cloudflare Worker** build (`worker/`): BM25 retrieval + one streaming Claude call,
+parity-tested against the Python source (no tool loop on the hosted tier).
 
 **Purpose:** the forward-looking portfolio piece — shows growth from the 2024 prototype.
 
