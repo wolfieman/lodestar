@@ -30,3 +30,31 @@ jobs:
         env:
           TEST_MODE: "true"
         run: uv run pytest -m unit
+
+  worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node (22 LTS)
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck (tsc)
+        run: npx tsc --noEmit
+
+      - name: Unit tests (vitest, offline)
+        # Runs the default config only. The *.workers.test.ts SELF.fetch suite
+        # (vitest.workers.config.ts) is intentionally excluded: the same
+        # scenarios are covered Node-natively by chat.test.ts, and the
+        # workers-pool runner is kept staged until it runs cleanly in CI.
+        run: npx vitest run
