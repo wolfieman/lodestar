@@ -1,0 +1,4 @@
+# Parity text files must stay LF so byte-equality tests (tests/test_worker_parity.py)
+# pass identically on Windows dev and Linux CI. These are imported verbatim by both
+# the TypeScript Worker (wrangler Text rule) and the Python parity tests.
+worker/src/*.txt text eol=lf

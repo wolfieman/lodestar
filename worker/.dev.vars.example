@@ -1,0 +1,11 @@
+# Local dev secrets/vars for `wrangler dev`. Copy to `.dev.vars` (gitignored).
+#
+# Offline by default: TEST_MODE=true makes the chat pipeline use the built-in
+# mock and make ZERO network calls (mirrors config.py's TEST_MODE-default-on
+# posture). The owner sets TEST_MODE=false + a real key locally only for live
+# smoke tests.
+TEST_MODE=true
+
+# Live key (only needed when TEST_MODE=false). In production this is set via
+# `npx wrangler secret put ANTHROPIC_API_KEY` and is NEVER committed.
+# ANTHROPIC_API_KEY=sk-ant-...

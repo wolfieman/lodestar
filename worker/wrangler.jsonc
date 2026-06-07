@@ -1,0 +1,44 @@
+{
+  // Cloudflare Worker config for the hosted lean Lodestar build.
+  // The Python full stack (CLI, hybrid RAG, MCP, FastAPI, Docker) is unaffected.
+  "name": "lodestar",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-01",
+  // nodejs_compat is required by @anthropic-ai/sdk on the Workers runtime.
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Single-source the rebranded index.html (+ favicon assets) from the same
+  // static dir served by wsgi.py and web.py. If wrangler rejects this
+  // outside-project path, the documented fallback is an npm prebuild copy step.
+  // The ASSETS binding lets index.ts rewrite /static/* requests (Flask path
+  // scheme) to the root-served asset paths, keeping index.html host-agnostic.
+  "assets": { "directory": "../src/lodestar/static", "binding": "ASSETS" },
+
+  "vars": {
+    "TEST_MODE": "false",
+    // Exact parity with the live cPanel env value (full dated id of claude-haiku-4-5).
+    "LODESTAR_MODEL": "claude-haiku-4-5-20251001",
+    // anthropic.py complete() default.
+    "MAX_TOKENS": "1024"
+  },
+
+  // GA top-level rate-limit config (wrangler >= 4.36.0). NOT the stale
+  // unsafe.bindings form. Keyed per request on cf-connecting-ip in chat.ts.
+  // Per-colo, approximate; the Anthropic spend cap is the true cost backstop.
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 12, "period": 60 }
+    }
+  ],
+
+  // Imports src/system-prompt.txt and src/context-preamble.txt as strings.
+  // fallthrough keeps wrangler's DEFAULT Text rule (also covers .html/.sql) active.
+  "rules": [{ "type": "Text", "globs": ["**/*.txt"], "fallthrough": true }],
+
+  "observability": { "enabled": true }
+
+  // routes added only at cutover (Phase 3):
+  // "routes": [{ "pattern": "lodestar.sanyer.org", "custom_domain": true }]
+}
