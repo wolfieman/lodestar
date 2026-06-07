@@ -1,0 +1,238 @@
+{
+  "router": [
+    {
+      "query": "Help me improve my resume",
+      "category": "resume"
+    },
+    {
+      "query": "polish my CV please",
+      "category": "resume"
+    },
+    {
+      "query": "writing a cover letter",
+      "category": "resume"
+    },
+    {
+      "query": "how to prep for a behavioral interview",
+      "category": "interview"
+    },
+    {
+      "query": "explain the STAR method",
+      "category": "interview"
+    },
+    {
+      "query": "scholarships and financial aid for first-gen students",
+      "category": "scholarship"
+    },
+    {
+      "query": "any grant or funding tips",
+      "category": "scholarship"
+    },
+    {
+      "query": "summer internship or co-op search",
+      "category": "internship"
+    },
+    {
+      "query": "how to network on LinkedIn with alumni",
+      "category": "networking"
+    },
+    {
+      "query": "find a mentor to connect with",
+      "category": "networking"
+    },
+    {
+      "query": "choosing a major and keeping my GPA up",
+      "category": "academic"
+    },
+    {
+      "query": "what degree should I study",
+      "category": "academic"
+    },
+    {
+      "query": "resume tips for my internship interview",
+      "category": "resume"
+    },
+    {
+      "query": "i feel disconnected from campus",
+      "category": "networking"
+    },
+    {
+      "query": "hello there",
+      "category": "general"
+    },
+    {
+      "query": "",
+      "category": "general"
+    }
+  ],
+  "web_search": [
+    {
+      "query": "python internships",
+      "output": "[web_search stub] In production this returns current scholarship, internship, and job listings for: 'python internships'. Back this with a search API or an MCP search server."
+    },
+    {
+      "query": "what's a good scholarship?",
+      "output": "[web_search stub] In production this returns current scholarship, internship, and job listings for: \"what's a good scholarship?\". Back this with a search API or an MCP search server."
+    },
+    {
+      "query": "say \"hi\" to recruiters",
+      "output": "[web_search stub] In production this returns current scholarship, internship, and job listings for: 'say \"hi\" to recruiters'. Back this with a search API or an MCP search server."
+    },
+    {
+      "query": "O'Neil \"summer\" fellowships",
+      "output": "[web_search stub] In production this returns current scholarship, internship, and job listings for: 'O\\'Neil \"summer\" fellowships'. Back this with a search API or an MCP search server."
+    },
+    {
+      "query": "tabs\tand\nnewlines",
+      "output": "[web_search stub] In production this returns current scholarship, internship, and job listings for: 'tabs\\tand\\nnewlines'. Back this with a search API or an MCP search server."
+    }
+  ],
+  "rrf": [
+    {
+      "dense": [
+        "a",
+        "b",
+        "c"
+      ],
+      "sparse": [
+        "d",
+        "e",
+        "f"
+      ],
+      "k": 4,
+      "expected": [
+        "a",
+        "d",
+        "b",
+        "e"
+      ]
+    },
+    {
+      "dense": [
+        "a",
+        "b",
+        "c"
+      ],
+      "sparse": [
+        "c",
+        "a",
+        "z"
+      ],
+      "k": 4,
+      "expected": [
+        "a",
+        "c",
+        "b",
+        "z"
+      ]
+    },
+    {
+      "dense": [
+        "a",
+        "b"
+      ],
+      "sparse": [
+        "b",
+        "a"
+      ],
+      "k": 2,
+      "expected": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "dense": [],
+      "sparse": [
+        "a",
+        "b",
+        "c"
+      ],
+      "k": 4,
+      "expected": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "dense": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+      ],
+      "sparse": [],
+      "k": 3,
+      "expected": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "dense": [
+        "x"
+      ],
+      "sparse": [
+        "y"
+      ],
+      "k": 2,
+      "expected": [
+        "x",
+        "y"
+      ]
+    },
+    {
+      "dense": [
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5",
+        "d6",
+        "d7",
+        "d8",
+        "d9",
+        "d10",
+        "d11",
+        "d12",
+        "d13",
+        "d14"
+      ],
+      "sparse": [
+        "s1",
+        "s2",
+        "s3",
+        "s4",
+        "s5",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s10",
+        "s11",
+        "s12",
+        "s13",
+        "s14"
+      ],
+      "k": 6,
+      "pool": 10,
+      "expected": [
+        "d1",
+        "s1",
+        "d2",
+        "s2",
+        "d3",
+        "s3"
+      ]
+    }
+  ],
+  "routing_hint": {
+    "category": "scholarship",
+    "text": "Routing hint: this request looks like 'scholarship'. Use the retrieve_knowledge tool to ground specifics, and web_search for current listings."
+  },
+  "max_iters_reply": "I couldn't complete that within the allotted reasoning steps."
+}

@@ -62,6 +62,17 @@ export function mockReply(message: string, system: string): string {
   );
 }
 
+/**
+ * MockProvider.run_tools parity (mock.py:30-46): the hosted TEST_MODE drives
+ * the agent with MockProvider, which deterministically calls the FIRST tool
+ * and summarizes: "[TEST_MODE agent] called tool '{name}'. Result preview:
+ * {result[:160]}". Python slices by CODE POINTS, so we spread before slicing.
+ */
+export function mockAgentReply(toolName: string, result: string): string {
+  const preview = [...result].slice(0, 160).join("");
+  return `[TEST_MODE agent] called tool '${toolName}'. Result preview: ${preview}`;
+}
+
 /** Split a string into ~`parts` contiguous chunks (last absorbs the remainder). */
 export function chunkText(text: string, parts = 4): string[] {
   if (text.length === 0) {

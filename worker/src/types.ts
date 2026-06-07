@@ -18,6 +18,19 @@ export interface AssetsFetcher {
   fetch(request: Request): Promise<Response>;
 }
 
+/** Workers AI binding surface (used for bge-small-en-v1.5 embeddings only). */
+export interface AiBinding {
+  run(model: string, inputs: { text: string[] }): Promise<{ data: number[][] }>;
+}
+
+/** Vectorize index binding surface (query only; seeding is a REST-side script). */
+export interface VectorizeBinding {
+  query(
+    vector: number[],
+    options: { topK: number },
+  ): Promise<{ matches: { id: string; score: number }[] }>;
+}
+
 /** Worker environment bindings and vars (see wrangler.jsonc + .dev.vars). */
 export interface Env {
   /** Secret; only present (and only used) when TEST_MODE is falsy. */
@@ -32,4 +45,8 @@ export interface Env {
   RATE_LIMITER: RateLimit;
   /** Static assets; used to serve Flask-scheme /static/* paths (index.ts). */
   ASSETS: AssetsFetcher;
+  /** Workers AI — same embedding model as the Python stack's fastembed. */
+  AI: AiBinding;
+  /** Vectorize index `lodestar-kb` (384-dim cosine, seeded from the KB). */
+  VECTORIZE: VectorizeBinding;
 }

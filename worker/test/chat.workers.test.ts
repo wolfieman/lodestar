@@ -86,16 +86,18 @@ describe("/api/chat TEST_MODE streaming", () => {
 
     const body = await readSse(r);
     expect(body).toContain("event: delta");
-    expect(body).toContain("[TEST_MODE]");
+    expect(body).toContain("[TEST_MODE agent]");
     expect(body).toContain("event: done");
-    // Reassemble delta text and confirm the MockProvider-parity wording.
+    // Reassemble delta text and confirm the MockProvider.run_tools wording
+    // (the hosted TEST_MODE drives the agent, which calls the first tool).
     const text = [...body.matchAll(/event: delta\ndata: (.*)\n/g)]
       .map((m) => JSON.parse(m[1]).text)
       .join("");
-    expect(text).toBe(
-      "[TEST_MODE] Lodestar (HBCU career coach) would answer " +
-        "'How do I write a resume?' [grounded].",
-    );
+    expect(
+      text.startsWith(
+        "[TEST_MODE agent] called tool 'retrieve_knowledge'. Result preview: ",
+      ),
+    ).toBe(true);
   });
 });
 

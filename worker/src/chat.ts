@@ -1,20 +1,25 @@
-// POST /api/chat — the lean hosted pipeline, mirroring wsgi.py:75-90 / web.py:78-87
-// with streaming added (the locked "build streaming once" decision). Flow:
+// POST /api/chat — the hosted AGENTIC pipeline, mirroring wsgi.py's gate order
+// and the Python agent stack (agents/agent.py + providers/anthropic.py
+// run_tools), with the answer streamed. Flow:
 //
 //   1. rate limit (env.RATE_LIMITER, keyed cf-connecting-ip; fail OPEN on throw)
 //   2. tolerant JSON parse + validation (empty or >1000 code points -> 400)
 //   3. PII input gate (-> 400 {detail: PII_BLOCK_DETAIL}, exact safety.py bytes)
-//   4. BM25 top-4 over the 23-snippet KB -> formatSnippets -> buildSystem
-//   5. TEST_MODE -> streamed mock; else one streaming Anthropic call
-//   6. SSE response: delta* then done {pii, stop_reason}; mid-stream error -> error
-//   7. pre-stream typed Anthropic errors -> 429/502 JSON (no key leakage)
+//   4. keyword router hint (agents/router.py) appended to the system prompt
+//      (agent.py:24-31 parity) — context arrives via the retrieve_knowledge
+//      tool, NOT pre-injected
+//   5. TEST_MODE -> streamed MockProvider.run_tools-parity reply; else the
+//      Claude tool-use loop (agent.ts), final answer streamed token-by-token
+//   6. retrieve_knowledge = HYBRID retrieval: Workers AI embeddings (same model
+//      as the Python stack's fastembed) + Vectorize, RRF-fused with BM25; if
+//      the dense side fails it degrades to BM25-only (lean-build behavior)
+//   7. SSE response: delta* then done {pii, stop_reason}; mid-stream error ->
+//      error event; pre-stream typed Anthropic errors -> 429/502 JSON
 //
 // Single user turn, stateless per request — exactly like wsgi.py's fresh agent.
-// The agent.py routing-hint sentence and tool-use loop are intentionally dropped
-// (locked decision: the hosted build is a single grounded completion, not the
-// agentic stack). detect_pii on the user message BLOCKS (parity with the Python
-// servers on disk); detect_pii on the full reply is post-hoc and advisory,
-// shipped in the `done` payload's `pii` array.
+// detect_pii on the user message BLOCKS (parity with the Python servers);
+// detect_pii on the full displayed reply is post-hoc and advisory, shipped in
+// the `done` payload's `pii` array.
 
 import Anthropic, {
   APIError,
@@ -22,9 +27,19 @@ import Anthropic, {
   RateLimitError,
 } from "@anthropic-ai/sdk";
 
+import {
+  routingHint,
+  retrieveKnowledgeTool,
+  route,
+  runAgentStream,
+  webSearchTool,
+  type AgentStreamEvent,
+  type ToolSpec,
+} from "./agent";
 import { BM25Retriever } from "./bm25";
-import { chunkText, mockReply } from "./mock";
+import { chunkText, mockAgentReply } from "./mock";
 import { buildSystem, formatSnippets } from "./prompt";
+import { HybridRetriever, VectorRetriever, type Retriever } from "./retrieval";
 import { detectPii, PII_BLOCK_DETAIL } from "./safety";
 import {
   SSE_HEADERS,
@@ -39,6 +54,9 @@ import knowledge from "../../data/knowledge.json";
 // Module-level KB + BM25 index: built once per isolate (sparse.py parity).
 const SNIPPETS = knowledge as Snippet[];
 const RETRIEVER = new BM25Retriever(SNIPPETS);
+const BY_ID: ReadonlyMap<string, Snippet> = new Map(
+  SNIPPETS.map((s) => [s.id, s]),
+);
 
 // config.py:13-18 truthy set, exact.
 const TRUTHY = new Set(["1", "true", "yes", "on"]);
@@ -71,6 +89,20 @@ function codePointLength(s: string): number {
     n += 1;
   }
   return n;
+}
+
+/** Hybrid retriever per request (dense side needs env bindings); degrades to
+ *  BM25-only inside VectorRetriever if Workers AI / Vectorize fail. */
+function makeRetriever(env: Env): Retriever {
+  return new HybridRetriever(
+    new VectorRetriever(env.AI, env.VECTORIZE, BY_ID),
+    RETRIEVER,
+  );
+}
+
+/** agent.py:26-31: build_system() (no pre-injected context) + routing hint. */
+function agentSystem(message: string): string {
+  return `${buildSystem()}\n\n${routingHint(route(message))}`;
 }
 
 export async function handleChat(request: Request, env: Env): Promise<Response> {
@@ -107,20 +139,28 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     return json({ detail: PII_BLOCK_DETAIL }, 400);
   }
 
-  // 4. Retrieval -> context -> system prompt (Responder/sparse/knowledge parity).
-  const snippets = RETRIEVER.retrieve(message, 4);
-  const system = buildSystem(formatSnippets(snippets));
-
-  // 5/6. Stream the reply (mock or live) through the SSE encoder.
+  // 4/5. Stream the reply (mock or live agent loop) through the SSE encoder.
   if (isTruthy(env.TEST_MODE)) {
-    return streamMock(message, system);
+    return streamMock(message);
   }
-  return streamLive(message, system, env);
+  return streamLive(message, env);
 }
 
-/** TEST_MODE: stream the MockProvider-parity reply in ~4 chunks, then done. */
-function streamMock(message: string, system: string): Response {
-  const text = mockReply(message, system);
+/**
+ * TEST_MODE: MockProvider.run_tools parity (mock.py:30-46) — the hosted Python
+ * TEST_MODE drives the agent with MockProvider, which deterministically calls
+ * the FIRST tool (retrieve_knowledge) with the raw message and summarizes:
+ *   "[TEST_MODE agent] called tool '{name}'. Result preview: {result[:160]}"
+ * The retrieval here is BM25-only (offline; no Workers AI/Vectorize calls),
+ * matching the lean build's TEST_MODE exactly. Streamed in ~4 chunks through
+ * the real SSE path with a small delay so `wrangler dev` shows incremental
+ * delivery.
+ */
+function streamMock(message: string): Response {
+  const result =
+    formatSnippets(RETRIEVER.retrieve(message, 4)) ||
+    "No matching knowledge found.";
+  const text = mockAgentReply("retrieve_knowledge", result);
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const sink: SseSink = controller;
@@ -140,31 +180,41 @@ function streamMock(message: string, system: string): Response {
 }
 
 /**
- * Live path: one streaming Anthropic call. Pre-stream typed errors map to 429/502
- * JSON (so the frontend's !r.ok branch renders {detail}); once tokens flow, a
- * failure can only be an `error` SSE event followed by close.
+ * Live path: the Claude tool-use loop with the answer streamed. Iteration 0's
+ * stream is created BEFORE the Response opens so pre-stream typed errors map to
+ * real 429/502 JSON (the frontend's !r.ok branch); once the SSE stream is open,
+ * any failure becomes an `error` event followed by close.
  */
-async function streamLive(
-  message: string,
-  system: string,
-  env: Env,
-): Promise<Response> {
+async function streamLive(message: string, env: Env): Promise<Response> {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
   const maxTokens = Number.parseInt(env.MAX_TOKENS, 10) || 1024;
+  const tools: ToolSpec[] = [
+    retrieveKnowledgeTool(makeRetriever(env)),
+    webSearchTool(),
+  ];
+  const system = agentSystem(message);
 
-  let anthropicStream: AsyncIterable<RawStreamEvent>;
-  try {
-    anthropicStream = (await client.messages.create({
+  // Shared params for every loop iteration (anthropic.py:60-79 parity:
+  // cache_control kept; same model/max_tokens; tool specs without func).
+  const createStream = (convo: unknown[]) =>
+    client.messages.create({
       model: env.LODESTAR_MODEL,
       max_tokens: maxTokens,
-      // cache_control kept for anthropic.py:39-45 parity (harmless no-op below
-      // Haiku 4.5's minimum cacheable prefix).
       system: [
         { type: "text", text: system, cache_control: { type: "ephemeral" } },
       ],
-      messages: [{ role: "user", content: message }],
+      tools: tools.map((t) => ({
+        name: t.name,
+        description: t.description,
+        input_schema: t.input_schema,
+      })) as never,
+      messages: convo as never,
       stream: true,
-    })) as AsyncIterable<RawStreamEvent>;
+    }) as Promise<AsyncIterable<AgentStreamEvent>>;
+
+  let firstStream: AsyncIterable<AgentStreamEvent>;
+  try {
+    firstStream = await createStream([{ role: "user", content: message }]);
   } catch (err) {
     // Pre-stream failure: the stream was never opened, so return real JSON codes.
     return preStreamError(err);
@@ -173,30 +223,19 @@ async function streamLive(
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const sink: SseSink = controller;
-      let full = "";
-      let stopReason: string | null = null;
       try {
-        for await (const event of anthropicStream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta?.type === "text_delta" &&
-            typeof event.delta.text === "string"
-          ) {
-            full += event.delta.text;
-            sendDelta(sink, event.delta.text);
-          } else if (
-            event.type === "message_delta" &&
-            event.delta?.stop_reason != null
-          ) {
-            stopReason = event.delta.stop_reason;
-          }
-        }
+        const { displayed, stopReason } = await runAgentStream({
+          firstStream,
+          createNext: createStream,
+          message,
+          tools,
+          sink,
+        });
         // Post-hoc PII advisory: streamed tokens cannot be retracted, so detect
-        // on the FULL reply once and ship the kinds in `done` (frontend appends
-        // a one-line note when non-empty).
-        sendDone(sink, detectPii(full), stopReason);
+        // on the FULL displayed text once and ship the kinds in `done`.
+        sendDone(sink, detectPii(displayed), stopReason);
       } catch (err) {
-        console.error("mid-stream Anthropic error:", err);
+        console.error("mid-stream agent error:", err);
         sendError(sink, MSG_UPSTREAM);
       } finally {
         controller.close();
@@ -218,16 +257,4 @@ function preStreamError(err: unknown): Response {
     return json({ detail: MSG_UPSTREAM }, 502);
   }
   return json({ detail: MSG_UPSTREAM }, 502);
-}
-
-// Minimal structural typing for the SDK's raw stream events — we only read the
-// fields the relay touches, narrowed by `type`. (The SDK's full union is large;
-// this keeps the relay loop honest under strict mode without importing it.)
-interface RawStreamEvent {
-  type: string;
-  delta?: {
-    type?: string;
-    text?: string;
-    stop_reason?: string | null;
-  };
 }

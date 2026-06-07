@@ -128,3 +128,57 @@ def test_bm25_fixture_is_fresh():
         assert commit_case["rankedIds"] == regen_case["rankedIds"], query
         # Scores are rounded identically by the generator; exact match expected.
         assert commit_case["scores"] == regen_case["scores"], query
+
+
+AGENT_TS = WORKER_SRC / "agent.ts"
+MOCK_TS = WORKER_SRC / "mock.ts"
+AGENT_FIXTURE_PATH = (
+    REPO_ROOT / "worker" / "test" / "fixtures" / "agent_parity.json"
+)
+
+
+@pytest.mark.unit
+def test_agent_fixture_is_fresh():
+    """The committed agent fixture matches a fresh in-memory regeneration.
+
+    Catches router/tools/hybrid wording or behavior drift in the Python agent
+    stack that would silently desync the Worker port — forces a regen + commit.
+    """
+    import scripts.gen_agent_fixtures as gen
+
+    committed = json.loads(AGENT_FIXTURE_PATH.read_text(encoding="utf-8"))
+    assert committed == gen.build_fixture()
+
+
+@pytest.mark.unit
+def test_agent_strings_present_in_agent_ts():
+    """agent.py / anthropic.py / tools.py user-facing strings appear verbatim
+    in the Worker's agent.ts (fragments chosen to survive line-wrapping)."""
+    src = AGENT_TS.read_text(encoding="utf-8")
+    # agent.py:26-31 routing hint fragments.
+    assert "Routing hint: this request looks like '" in src
+    assert "retrieve_knowledge tool to ground specifics, and web_search for " in src
+    assert "current listings." in src
+    # anthropic.py:102 exhaustion reply.
+    assert "I couldn't complete that within the allotted reasoning steps." in src
+    # tools.py descriptions (head + tail fragments around the wrap points).
+    assert "Search the HBCU career knowledge base for guidance on resumes, " in src
+    assert "interviews, scholarships, internships, networking, and academics." in src
+    assert (
+        "Search the web for current scholarships, internships, and job postings."
+        in src
+    )
+    assert "No matching knowledge found." in src
+
+
+@pytest.mark.unit
+def test_mock_agent_reply_parity():
+    """mock.py run_tools template fragments are pinned on BOTH sides."""
+    mock_py = (
+        REPO_ROOT / "src" / "lodestar" / "providers" / "mock.py"
+    ).read_text(encoding="utf-8")
+    mock_ts = MOCK_TS.read_text(encoding="utf-8")
+    assert "[TEST_MODE agent] called tool '" in mock_py
+    assert "Result preview: " in mock_py
+    assert "[TEST_MODE agent] called tool '" in mock_ts
+    assert "Result preview: " in mock_ts

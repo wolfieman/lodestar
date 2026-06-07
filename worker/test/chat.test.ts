@@ -16,7 +16,20 @@
 import { describe, expect, it } from "vitest";
 
 import worker from "../src/index";
-import type { AssetsFetcher, Env, RateLimit } from "../src/types";
+import { BM25Retriever } from "../src/bm25";
+import { mockAgentReply } from "../src/mock";
+import { formatSnippets } from "../src/prompt";
+import type {
+  AiBinding,
+  AssetsFetcher,
+  Env,
+  RateLimit,
+  Snippet,
+  VectorizeBinding,
+} from "../src/types";
+import knowledge from "../../data/knowledge.json";
+
+const KB = knowledge as Snippet[];
 
 const PII_BLOCK_DETAIL =
   "That looks like it includes personal info (an email, phone number, or SSN). " +
@@ -53,6 +66,24 @@ function stubAssets(): AssetsFetcher {
   };
 }
 
+/** Offline stubs for the dense-retrieval bindings (TEST_MODE never calls them;
+ *  live-path tests inject throwing variants to prove BM25 degradation). */
+function stubAi(): AiBinding {
+  return {
+    run() {
+      return Promise.reject(new Error("AI binding not available in tests"));
+    },
+  };
+}
+
+function stubVectorize(): VectorizeBinding {
+  return {
+    query() {
+      return Promise.reject(new Error("Vectorize not available in tests"));
+    },
+  };
+}
+
 function makeEnv(overrides: Partial<Env> = {}): Env {
   return {
     TEST_MODE: "true",
@@ -60,6 +91,8 @@ function makeEnv(overrides: Partial<Env> = {}): Env {
     MAX_TOKENS: "1024",
     RATE_LIMITER: stubLimiter(),
     ASSETS: stubAssets(),
+    AI: stubAi(),
+    VECTORIZE: stubVectorize(),
     ...overrides,
   };
 }
@@ -193,16 +226,18 @@ describe("POST /api/chat TEST_MODE streaming", () => {
     expect(body).toContain("event: done");
     expect(body.endsWith("\n\n")).toBe(true);
 
-    // Reassemble the delta text -> exact MockProvider parity (mock.py:25-28).
+    // Reassemble the delta text -> exact MockProvider.run_tools parity
+    // (mock.py:30-46): first tool called with the raw message, result preview
+    // sliced to 160 code points. Expected computed via the same helpers.
     const text = [...body.matchAll(/event: delta\ndata: (.*)\n/g)]
       .map((m) => (JSON.parse(m[1]) as { text: string }).text)
       .join("");
-    // "How do I write a resume?" retrieves 21 positive-scoring snippets, so the
-    // system prompt carries the reference-material preamble -> [grounded].
-    expect(text).toBe(
-      "[TEST_MODE] Lodestar (HBCU career coach) would answer " +
-        "'How do I write a resume?' [grounded].",
-    );
+    const result =
+      formatSnippets(new BM25Retriever(KB).retrieve("How do I write a resume?", 4)) ||
+      "No matching knowledge found.";
+    expect(text).toBe(mockAgentReply("retrieve_knowledge", result));
+    expect(text.startsWith("[TEST_MODE agent] called tool 'retrieve_knowledge'."))
+      .toBe(true);
 
     // done payload: pii [] (mock text has none) and a stop_reason field present.
     const doneMatch = body.match(/event: done\ndata: (.*)\n/)!;
@@ -214,7 +249,7 @@ describe("POST /api/chat TEST_MODE streaming", () => {
     expect(done).toHaveProperty("stop_reason");
   });
 
-  it("a query with no KB hits is [ungrounded]", async () => {
+  it("a query with no KB hits previews the no-match tool result", async () => {
     const r = await postChat("zzqqxx flibbertigibbet", makeEnv());
     expect(r.status).toBe(200);
     const body = await readSse(r);
@@ -222,8 +257,8 @@ describe("POST /api/chat TEST_MODE streaming", () => {
       .map((m) => (JSON.parse(m[1]) as { text: string }).text)
       .join("");
     expect(text).toBe(
-      "[TEST_MODE] Lodestar (HBCU career coach) would answer " +
-        "'zzqqxx flibbertigibbet' [ungrounded].",
+      "[TEST_MODE agent] called tool 'retrieve_knowledge'. " +
+        "Result preview: No matching knowledge found.",
     );
   });
 

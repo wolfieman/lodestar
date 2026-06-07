@@ -22,6 +22,12 @@
     "MAX_TOKENS": "1024"
   },
 
+  // Hybrid RAG: Vectorize holds the seeded KB vectors (scripts/seed-vectorize.mjs);
+  // Workers AI runs the SAME embedding model as the Python stack's fastembed
+  // (bge-small-en-v1.5, 384 dims). Retrieval degrades to BM25-only if either fails.
+  "vectorize": [{ "binding": "VECTORIZE", "index_name": "lodestar-kb" }],
+  "ai": { "binding": "AI" },
+
   // GA top-level rate-limit config (wrangler >= 4.36.0). NOT the stale
   // unsafe.bindings form. Keyed per request on cf-connecting-ip in chat.ts.
   // Per-colo, approximate; the Anthropic spend cap is the true cost backstop.
