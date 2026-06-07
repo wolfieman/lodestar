@@ -192,6 +192,11 @@
       .chip:hover,#send:hover{transform:none}
     }
   </style>
+  <!-- Cloudflare Web Analytics (cookie-less; page views + timings only).
+       No SRI by design: the beacon is a rolling artifact (a pinned hash would
+       fail closed on Cloudflare's next release), and the whole site is already
+       served by Cloudflare, so this origin adds no new trust party. -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c45664022ba94757bf62fb4a9f7ae7fa"}'></script>
 </head>
 <body>
   <div class="field-bg" aria-hidden="true"></div>
