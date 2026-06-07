@@ -9,9 +9,27 @@
   <link rel="icon" href="/static/favicon-16.png" sizes="16x16" type="image/png">
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
   <meta name="theme-color" content="#EAF2F9">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload" href="/static/fonts/cinzel-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    /* Self-hosted latin-subset woff2 (SIL OFL 1.1 — see static/fonts/OFL-NOTE.md). */
+    @font-face{
+      font-family:"Cinzel";font-style:normal;font-weight:700;font-display:swap;
+      src:url("/static/fonts/cinzel-700-latin.woff2") format("woff2");
+    }
+    @font-face{
+      font-family:"Inter";font-style:normal;font-weight:400;font-display:swap;
+      src:url("/static/fonts/inter-latin.woff2") format("woff2");
+    }
+    @font-face{
+      font-family:"Inter";font-style:normal;font-weight:500;font-display:swap;
+      src:url("/static/fonts/inter-latin.woff2") format("woff2");
+    }
+    @font-face{
+      font-family:"Inter";font-style:normal;font-weight:600;font-display:swap;
+      src:url("/static/fonts/inter-latin.woff2") format("woff2");
+    }
+  </style>
   <style>
     /* Lodestar — Motion-and-Depth tokens (chat-tool surfaces) */
     :root{

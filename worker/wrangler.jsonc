@@ -37,8 +37,10 @@
   // fallthrough keeps wrangler's DEFAULT Text rule (also covers .html/.sql) active.
   "rules": [{ "type": "Text", "globs": ["**/*.txt"], "fallthrough": true }],
 
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
 
-  // routes added only at cutover (Phase 3):
-  // "routes": [{ "pattern": "lodestar.sanyer.org", "custom_domain": true }]
+  // Cutover (Phase 3): the production custom domain. Cloudflare creates and
+  // manages the DNS record + certificate; the old grey-cloud A record must be
+  // deleted before this deploys (attach refuses to override existing records).
+  "routes": [{ "pattern": "lodestar.sanyer.org", "custom_domain": true }]
 }
