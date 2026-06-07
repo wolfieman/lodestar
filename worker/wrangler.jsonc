@@ -45,8 +45,11 @@
 
   "observability": { "enabled": true },
 
-  // Cutover (Phase 3): the production custom domain. Cloudflare creates and
-  // manages the DNS record + certificate; the old grey-cloud A record must be
-  // deleted before this deploys (attach refuses to override existing records).
-  "routes": [{ "pattern": "lodestar.sanyer.org", "custom_domain": true }]
+  // Production custom domains. Cloudflare creates and manages the DNS records
+  // + certificates (any conflicting record must be deleted before first attach).
+  // www serves the same app — kept alive for old links and type-in traffic.
+  "routes": [
+    { "pattern": "lodestar.sanyer.org", "custom_domain": true },
+    { "pattern": "www.lodestar.sanyer.org", "custom_domain": true }
+  ]
 }
