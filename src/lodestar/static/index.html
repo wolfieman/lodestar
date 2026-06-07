@@ -3,94 +3,468 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lodestar — HBCU Career Assistant</title>
+  <title>Lodestar — Career help for HBCU students</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/static/favicon-16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <meta name="theme-color" content="#EAF2F9">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { --bg:#0f1216; --panel:#171c23; --ink:#e7edf3; --muted:#8a97a6; --accent:#d97757; --user:#22303c; }
-    * { box-sizing: border-box; }
-    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    header { padding:20px 16px 8px; text-align:center; }
-    header h1 { margin:0; font-size:1.6rem; }
-    header p { margin:4px 0 0; color:var(--muted); font-size:.9rem; }
-    main { max-width:760px; margin:0 auto; padding:12px 16px 120px; }
-    #log { display:flex; flex-direction:column; gap:12px; }
-    .msg { padding:12px 14px; border-radius:12px; white-space:pre-wrap; word-wrap:break-word; }
-    .user { background:var(--user); align-self:flex-end; max-width:85%; }
-    .bot { background:var(--panel); align-self:flex-start; max-width:95%; }
-    .role { font-size:.72rem; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.05em; }
-    .starters { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0; }
-    .chip { background:var(--panel); border:1px solid #2a323c; color:var(--ink); border-radius:999px; padding:8px 12px; font-size:.85rem; cursor:pointer; }
-    .chip:hover { border-color:var(--accent); }
-    form { position:fixed; bottom:0; left:0; right:0; background:linear-gradient(transparent, var(--bg) 30%); padding:16px; }
-    .bar { max-width:760px; margin:0 auto; display:flex; gap:8px; }
-    input { flex:1; background:var(--panel); border:1px solid #2a323c; color:var(--ink); border-radius:10px; padding:12px 14px; font-size:1rem; }
-    button { background:var(--accent); color:#1a1109; border:0; border-radius:10px; padding:0 18px; font-weight:600; cursor:pointer; }
-    button:disabled { opacity:.5; cursor:default; }
-    a { color:var(--accent); }
+    /* Lodestar — Motion-and-Depth tokens (chat-tool surfaces) */
+    :root{
+      --ink:#1E3A5F;
+      --ink-deep:#16304F;
+      --blue-hi:#ADD2ED;
+      --blue-lo:#84B6DA;
+      --blue-deep:#6FA6CD;          /* field gradient terminus ONLY */
+      --rose-hi:#EDC8D2;
+      --rose-lo:#D6A1B1;
+      --laurel:#9DBF8E;             /* decorative only — never text */
+      --muted:#51627A;
+      --near-white:#EAF2F9;
+      --white:#FFFFFF;
+
+      --font-display:"Cinzel","Georgia",serif;
+      --font-body:"Inter",-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+      --glass-panel:rgba(255,255,255,.58);      /* no body text directly on it */
+      --glass-border:rgba(255,255,255,.7);
+      --header-bg:rgba(234,242,249,.85);
+      --bubble-bot:rgba(255,255,255,.78);
+      --bubble-bot-border:rgba(255,255,255,.85);
+      --bubble-user:linear-gradient(140deg,var(--ink) 0%,var(--ink-deep) 100%);
+      --chip-bg:rgba(255,255,255,.62);
+      --chip-border:rgba(30,58,95,.22);
+      --input-bg:rgba(255,255,255,.92);
+      --input-border:rgba(30,58,95,.20);
+      --error-bg:rgba(237,200,210,.55);
+      --error-border:var(--rose-lo);
+      --hairline:rgba(30,58,95,.10);
+
+      --shadow-sm:0 1px 2px rgba(22,48,79,.08), 0 2px 8px rgba(22,48,79,.06);
+      --shadow-md:0 6px 24px rgba(22,48,79,.12), 0 18px 48px rgba(22,48,79,.16);
+      --shadow-glass:0 8px 32px rgba(22,48,79,.20);
+
+      --radius:18px;
+      --radius-lg:26px;
+      --radius-pill:999px;
+      --maxw-chat:760px;
+      --gutter:clamp(12px,4vw,24px);
+      --ease:cubic-bezier(.22,.61,.36,1);
+
+      --blur-panel:blur(18px) saturate(150%);
+      --blur-header:blur(14px) saturate(160%);
+    }
+    @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+      :root{
+        --glass-panel:rgba(255,255,255,.92);
+        --header-bg:rgba(234,242,249,.97);
+        --bubble-bot:rgba(255,255,255,.97);
+        --chip-bg:rgba(255,255,255,.92);
+        --input-bg:var(--white);
+      }
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background-color:var(--blue-lo);color:var(--ink);font:400 16px/1.5 var(--font-body)}
+    :focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+    /* Field background — fixed atmospheric layer */
+    .field-bg{
+      position:fixed;inset:0;z-index:-2;
+      background:
+        radial-gradient(1100px 700px at 78% -8%, rgba(237,200,210,.55), transparent 60%),
+        radial-gradient(900px 700px at 8% 12%, rgba(173,210,237,.85), transparent 55%),
+        linear-gradient(165deg, #ADD2ED 0%, #84B6DA 46%, #6FA6CD 100%);
+    }
+    .field-bg::after{
+      content:"";position:absolute;inset:0;
+      background:
+        radial-gradient(600px 500px at 92% 88%, rgba(157,191,142,.30), transparent 60%),
+        radial-gradient(700px 600px at 30% 95%, rgba(234,242,249,.55), transparent 60%);
+    }
+
+    /* Header */
+    .app-header{position:sticky;top:0;z-index:100;background:var(--header-bg);-webkit-backdrop-filter:var(--blur-header);backdrop-filter:var(--blur-header);border-bottom:1px solid var(--hairline)}
+    .lockup{max-width:var(--maxw-chat);margin-inline:auto;padding:12px var(--gutter);display:flex;align-items:center;gap:10px}
+    .mark{flex:none;filter:drop-shadow(0 2px 4px rgba(22,48,79,.18))}
+    .mark .star{fill:var(--ink-deep)}
+    .mark .north{fill:var(--rose-lo)}
+    .wordmark{margin:0;font:700 clamp(1.05rem,2.5vw,1.2rem)/1.2 var(--font-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-deep)}
+    .divider{width:1px;height:16px;background:var(--hairline)}
+    .subtitle{margin:0;font:500 .82rem/1.4 var(--font-body);color:var(--muted)}
+    @media (max-width:600px){
+      .lockup{flex-wrap:wrap;row-gap:2px}
+      .divider{display:none}
+      .subtitle{flex-basis:100%;font-size:.78rem}
+    }
+
+    /* Conversation panel */
+    main{max-width:var(--maxw-chat);margin-inline:auto;padding:20px var(--gutter) calc(150px + env(safe-area-inset-bottom))}
+    .chat-panel{background:var(--glass-panel);-webkit-backdrop-filter:var(--blur-panel);backdrop-filter:var(--blur-panel);border:1px solid var(--glass-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-glass);padding:clamp(16px,3vw,28px);min-height:calc(100vh - 64px - 170px);min-height:calc(100dvh - 64px - 170px)}
+    #log{display:flex;flex-direction:column;gap:14px}
+
+    /* Message bubbles — high-solidity surfaces; no text on the .58 panel */
+    .msg{padding:14px 16px;box-shadow:var(--shadow-sm)}
+    .msg .body{white-space:pre-wrap;overflow-wrap:break-word;font:400 1rem/1.6 var(--font-body)}
+    .role{font:600 .72rem/1 var(--font-body);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+    .bot{background:var(--bubble-bot);border:1px solid var(--bubble-bot-border);border-radius:18px 18px 18px 6px;align-self:flex-start;max-width:95%}
+    .bot .role{color:var(--muted)}
+    .bot .body{color:var(--ink)}
+    .bot .body a{color:var(--ink-deep);text-decoration:underline;text-decoration-color:rgba(214,161,177,.7);text-underline-offset:3px}
+    .bot .body a:hover{text-decoration-color:var(--ink-deep)}
+    .user{background:var(--bubble-user);border-radius:18px 18px 6px 18px;align-self:flex-end;max-width:88%}
+    .user .role{color:var(--blue-hi)}
+    .user .body{color:var(--white)}
+    @media (min-width:601px){.bot{max-width:88%}.user{max-width:85%}}
+
+    /* Starter chips */
+    .starters{display:flex;flex-wrap:wrap;gap:8px;transition:opacity .3s var(--ease)}
+    .starters.fading{opacity:0;pointer-events:none}
+    .chip{background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:var(--radius-pill);padding:9px 16px;font:500 .88rem/1.3 var(--font-body);color:var(--ink-deep);cursor:pointer;text-align:left;transition:background .25s var(--ease),border-color .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease)}
+    .chip:hover{background:rgba(255,255,255,.92);border-color:rgba(30,58,95,.35);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+    .chip:active{transform:translateY(0);background:rgba(255,255,255,.85)}
+    @media (pointer:coarse){.chip{min-height:44px}}
+    @media (max-width:600px){.chat-panel{padding:14px}.chip{width:100%;min-height:44px}}
+
+    /* Typing indicator + streaming caret */
+    .dots{display:inline-flex;gap:5px;align-items:center;padding:4px 0}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.25;animation:dot-pulse 1.05s ease infinite}
+    .dot:nth-child(2){animation-delay:.15s}
+    .dot:nth-child(3){animation-delay:.3s}
+    @keyframes dot-pulse{0%,100%{opacity:.25}40%{opacity:1}}
+    .pending-text{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .caret{display:inline-block;width:2px;height:1em;background:var(--ink);border-radius:1px;margin-left:2px;vertical-align:text-bottom;animation:caret-blink 1s steps(2,start) infinite}
+    @keyframes caret-blink{50%{opacity:0}}
+
+    /* Error variant — rose carries "gentle problem"; no red */
+    .msg.error{background:linear-gradient(var(--error-bg),var(--error-bg)),linear-gradient(rgba(255,255,255,.78),rgba(255,255,255,.78));border:1px solid var(--error-border)}
+    .msg.error .body{color:var(--ink-deep)}
+    .rule{height:1px;background:var(--hairline);margin:10px 0}
+    .error-text{font:400 1rem/1.6 var(--font-body);color:var(--ink-deep)}
+    .retry{display:inline-block;margin-top:8px;background:none;border:0;padding:2px 0;font:500 .92rem/1.3 var(--font-body);color:var(--ink-deep);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+    .note{margin-top:10px;padding-top:8px;border-top:1px solid var(--hairline);font:400 .82rem/1.5 var(--font-body);color:var(--muted)}
+
+    /* Composer */
+    #composer{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:12px var(--gutter) calc(12px + env(safe-area-inset-bottom))}
+    @media (max-width:600px){#composer{padding-left:12px;padding-right:12px}}
+    .bar{max-width:var(--maxw-chat);margin-inline:auto;display:flex;flex-direction:column;gap:8px;background:var(--header-bg);-webkit-backdrop-filter:var(--blur-header);backdrop-filter:var(--blur-header);border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--shadow-md);padding:10px}
+    .bar-row{display:flex;gap:10px}
+    #q{flex:1;min-width:0;background:var(--input-bg);border:1px solid var(--input-border);border-radius:14px;padding:13px 16px;font:400 1rem/1.4 var(--font-body);color:var(--ink-deep);caret-color:var(--ink)}
+    #q::placeholder{color:var(--muted)}
+    #q:focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-color:var(--ink)}
+    #send{background:var(--ink);color:var(--white);border:0;border-radius:14px;padding:0 22px;min-height:48px;font:600 1rem var(--font-body);cursor:pointer;box-shadow:var(--shadow-sm);transition:background .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}
+    #send:hover{background:var(--ink-deep);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+    #send:active{transform:translateY(0)}
+    #send:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+    #send[aria-disabled="true"],#send[aria-disabled="true"]:hover{background:rgba(30,58,95,.40);cursor:default;transform:none;box-shadow:var(--shadow-sm)}
+    .privacy{margin:0;padding:0 4px;font:500 .78rem/1.4 var(--font-body);color:var(--ink-deep)}
+
+    /* Scroll-to-latest pill */
+    .pill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(140px + env(safe-area-inset-bottom));z-index:90;background:rgba(255,255,255,.92);color:var(--ink-deep);border:1px solid var(--chip-border);border-radius:var(--radius-pill);padding:8px 16px;font:500 .85rem/1.3 var(--font-body);box-shadow:var(--shadow-md);cursor:pointer}
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+      .dots{display:none}
+      .pending-text{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal;font:500 1rem/1.6 var(--font-body);color:var(--muted)}
+      .caret{animation:none}
+      .chip:hover,#send:hover{transform:none}
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Lodestar&nbsp;🧭</h1>
-    <p>An agentic, RAG-grounded career assistant for HBCU students — evolved from the first-place HP&nbsp;FOWA&nbsp;2024 IgniteAI.</p>
+  <div class="field-bg" aria-hidden="true"></div>
+  <header class="app-header">
+    <div class="lockup">
+      <svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path class="star" d="M12 1 L14.2 10.8 L22 13 L14.2 15.2 L12 22 L9.8 15.2 L2 13 L9.8 10.8 Z"/>
+        <path class="north" d="M12 1 L14.2 10.8 L12 13 L9.8 10.8 Z"/>
+      </svg>
+      <h1 class="wordmark">Lodestar</h1>
+      <span class="divider" aria-hidden="true"></span>
+      <p class="subtitle">Straight answers for HBCU students — résumés, internships, interviews, scholarships, networking.</p>
+    </div>
   </header>
   <main>
-    <div id="log">
-      <div class="bot"><div class="role">Lodestar</div>Hi! I can help with résumés, interviews, internships, scholarships, and networking. Ask me anything, or try one of these:</div>
-      <div class="starters">
-        <button class="chip">How do I find scholarships for HBCU STEM students?</button>
-        <button class="chip">What skills should I highlight on a data-science résumé?</button>
-        <button class="chip">How do I prepare for a behavioral interview?</button>
-        <button class="chip">Best ways to network with professionals while in college?</button>
+    <section class="chat-panel">
+      <div id="log" role="log" aria-live="polite">
+        <div class="msg bot"><div class="role">Lodestar</div><div class="body">What are you working on? Ask it straight, or start with one of these:</div></div>
+        <div class="starters" id="starters">
+          <button class="chip" type="button">Where do I find scholarships I actually qualify for?</button>
+          <button class="chip" type="button">What goes on my résumé if I have no internships yet?</button>
+          <button class="chip" type="button">How do I prep for a behavioral interview?</button>
+          <button class="chip" type="button">How do I network when I don't know anyone in the industry?</button>
+        </div>
       </div>
-    </div>
+    </section>
   </main>
-  <form id="f">
+  <button id="pill" class="pill" type="button" hidden>Jump to latest</button>
+  <form id="composer">
     <div class="bar">
-      <input id="q" autocomplete="off" placeholder="Ask Lodestar…" />
-      <button id="send" type="submit">Send</button>
+      <div class="bar-row">
+        <input id="q" autocomplete="off" placeholder="Ask Lodestar…" aria-label="Ask Lodestar" />
+        <button id="send" type="submit">Send</button>
+      </div>
+      <p class="privacy">No personal info needed — messages with an email, phone number, or SSN won't go through.</p>
     </div>
   </form>
   <script>
-    const log = document.getElementById('log');
-    const form = document.getElementById('f');
-    const q = document.getElementById('q');
-    const send = document.getElementById('send');
-    function add(role, text) {
-      const el = document.createElement('div');
-      el.className = 'msg ' + (role === 'You' ? 'user' : 'bot');
-      el.innerHTML = '<div class="role"></div>';
-      el.querySelector('.role').textContent = role;
-      el.appendChild(document.createTextNode(text));
-      log.appendChild(el);
-      window.scrollTo(0, document.body.scrollHeight);
-      return el;
-    }
-    async function ask(message) {
-      add('You', message);
-      send.disabled = true;
-      const thinking = add('Lodestar', '…');
-      try {
-        const r = await fetch('/api/chat', {
-          method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ message })
-        });
-        const data = await r.json();
-        thinking.removeChild(thinking.lastChild);
-        thinking.appendChild(document.createTextNode(data.reply || '(no response)'));
-      } catch (e) {
-        thinking.removeChild(thinking.lastChild);
-        thinking.appendChild(document.createTextNode('Error: ' + e));
+    (function () {
+      'use strict';
+      var log = document.getElementById('log');
+      var form = document.getElementById('composer');
+      var q = document.getElementById('q');
+      var send = document.getElementById('send');
+      var pill = document.getElementById('pill');
+      var starters = document.getElementById('starters');
+
+      var PENDING_TEXT = 'Working on it…';
+      var ERR_GENERIC = 'Something went wrong on our end. Wait a moment and try again.';
+      var EMPTY_REPLY = 'No answer came back. Try sending that again.';
+      var NOTE_PII = 'A quick note: leave out personal info like emails, phone numbers, or SSNs — Lodestar never needs them.';
+      var NOTE_TRUNC = 'That answer hit the length limit and may be cut off — ask a follow-up for the rest.';
+      var NOTE_DROP = 'The connection dropped before the answer finished.';
+
+      var busy = false;
+      var started = false;
+
+      function reduced() {
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       }
-      send.disabled = false;
-      window.scrollTo(0, document.body.scrollHeight);
-    }
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const m = q.value.trim();
-      if (m) { q.value = ''; ask(m); }
-    });
-    document.querySelectorAll('.chip').forEach(c =>
-      c.addEventListener('click', () => ask(c.textContent)));
+      function distBottom() {
+        var d = document.documentElement;
+        return d.scrollHeight - window.innerHeight - window.scrollY;
+      }
+      function nearBottom() { return distBottom() < 80; }
+      function toLatest(smooth) {
+        pill.hidden = true;
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: (smooth && !reduced()) ? 'smooth' : 'auto' });
+      }
+      function settle(stick, smooth) {
+        if (stick) toLatest(smooth); else pill.hidden = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (nearBottom()) pill.hidden = true;
+      }, { passive: true });
+      pill.addEventListener('click', function () { toLatest(true); });
+
+      function el(tag, cls, text) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+      }
+      function bubble(role, cls) {
+        var m = el('div', 'msg ' + cls);
+        m.appendChild(el('div', 'role', role));
+        m.appendChild(el('div', 'body'));
+        log.appendChild(m);
+        return m;
+      }
+      function setBusy(v) {
+        busy = v;
+        send.setAttribute('aria-disabled', v ? 'true' : 'false');
+      }
+      function hideStarters() {
+        if (started || !starters) return;
+        started = true;
+        starters.classList.add('fading');
+        starters.setAttribute('aria-hidden', 'true');
+        var chips = starters.querySelectorAll('.chip');
+        for (var i = 0; i < chips.length; i++) chips[i].disabled = true;
+        setTimeout(function () { starters.remove(); }, 350);
+      }
+      function pendingBubble() {
+        var m = bubble('Lodestar', 'bot');
+        m.setAttribute('aria-busy', 'true');
+        var ind = el('span', 'indicator');
+        var dots = el('span', 'dots');
+        dots.setAttribute('aria-hidden', 'true');
+        for (var i = 0; i < 3; i++) dots.appendChild(el('span', 'dot'));
+        ind.appendChild(dots);
+        ind.appendChild(el('span', 'pending-text', PENDING_TEXT));
+        m.querySelector('.body').appendChild(ind);
+        return m;
+      }
+      function finishBubble(m) {
+        m.removeAttribute('aria-busy');
+        var c = m.querySelector('.caret');
+        if (c) c.remove();
+      }
+      function note(m, text) { m.appendChild(el('div', 'note', text)); }
+      function errorize(m, text, failed) {
+        var stick = nearBottom();
+        finishBubble(m);
+        var ind = m.querySelector('.indicator');
+        if (ind) ind.remove();
+        m.classList.add('error');
+        var partial = m.querySelector('.body').textContent.trim().length > 0;
+        if (partial) m.appendChild(el('div', 'rule'));
+        m.appendChild(el('div', 'error-text', text));
+        var retry = el('button', 'retry', 'Try again');
+        retry.type = 'button';
+        retry.addEventListener('click', function () {
+          q.value = failed;
+          q.focus();
+        });
+        m.appendChild(retry);
+        settle(stick, true);
+      }
+
+      function readDetail(r) {
+        return r.json().then(function (d) {
+          var detail = d && d.detail;
+          if (typeof detail === 'string' && detail.trim()) return detail;
+          if (Array.isArray(detail)) {
+            var msgs = [];
+            for (var i = 0; i < detail.length; i++) {
+              if (detail[i] && typeof detail[i].msg === 'string') msgs.push(detail[i].msg);
+            }
+            if (msgs.length) return msgs.join(' ');
+          }
+          return ERR_GENERIC;
+        }).catch(function (e) {
+          console.error(e);
+          return ERR_GENERIC;
+        });
+      }
+
+      async function readStream(r, p, message) {
+        var body = p.querySelector('.body');
+        var stream = null, caret = null, buf = '', raf = 0, sawDone = false, sawError = false;
+        function ensureStream() {
+          if (stream) return;
+          body.textContent = '';
+          stream = el('span', 'stream');
+          caret = el('span', 'caret');
+          caret.setAttribute('aria-hidden', 'true');
+          body.appendChild(stream);
+          body.appendChild(caret);
+        }
+        function flushNow() {
+          if (raf) { cancelAnimationFrame(raf); raf = 0; }
+          if (!buf) return;
+          ensureStream();
+          var stick = nearBottom();
+          stream.textContent += buf;
+          buf = '';
+          settle(stick, false);
+        }
+        function queue(t) {
+          buf += t;
+          if (!raf) raf = requestAnimationFrame(function () { raf = 0; flushNow(); });
+        }
+        function handle(name, data) {
+          if (name === 'delta') {
+            if (data && typeof data.text === 'string') queue(data.text);
+          } else if (name === 'done') {
+            sawDone = true;
+            flushNow();
+            var stick = nearBottom();
+            finishBubble(p);
+            if (!stream || !stream.textContent) body.textContent = EMPTY_REPLY;
+            if (data && data.pii && data.pii.length) note(p, NOTE_PII);
+            if (data && data.stop_reason === 'max_tokens') note(p, NOTE_TRUNC);
+            settle(stick, true);
+          } else if (name === 'error') {
+            sawError = true;
+            flushNow();
+            var detail = (data && typeof data.detail === 'string' && data.detail.trim()) ? data.detail : ERR_GENERIC;
+            errorize(p, detail, message);
+          }
+        }
+        function dispatch(raw) {
+          var name = 'message', dataStr = '';
+          var lines = raw.split('\n');
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (line.indexOf('event:') === 0) name = line.slice(6).trim();
+            else if (line.indexOf('data:') === 0) dataStr += (dataStr ? '\n' : '') + line.slice(5).trim();
+          }
+          var data = null;
+          if (dataStr) { try { data = JSON.parse(dataStr); } catch (e) { console.error(e); } }
+          handle(name, data);
+        }
+        var reader = r.body.getReader();
+        var dec = new TextDecoder();
+        var acc = '';
+        for (;;) {
+          var chunk = await reader.read();
+          if (chunk.done) break;
+          acc = (acc + dec.decode(chunk.value, { stream: true })).replace(/\r\n/g, '\n');
+          var i;
+          while ((i = acc.indexOf('\n\n')) >= 0) {
+            var raw = acc.slice(0, i);
+            acc = acc.slice(i + 2);
+            dispatch(raw);
+            if (sawDone || sawError) break;
+          }
+          if (sawDone || sawError) break;
+        }
+        if (!sawDone && !sawError && acc.indexOf('data:') >= 0) dispatch(acc);
+        if (!sawDone && !sawError) {
+          flushNow();
+          errorize(p, NOTE_DROP, message);
+        }
+      }
+
+      async function ask(message) {
+        if (busy) return;
+        hideStarters();
+        var stick = nearBottom();
+        var u = bubble('You', 'user');
+        u.querySelector('.body').textContent = message;
+        setBusy(true);
+        var p = pendingBubble();
+        settle(stick, true);
+        try {
+          var r = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+          });
+          var ct = (r.headers.get('content-type') || '');
+          if (!r.ok) {
+            errorize(p, await readDetail(r), message);
+          } else if (ct.indexOf('text/event-stream') >= 0) {
+            await readStream(r, p, message);
+          } else {
+            var data = null;
+            try { data = await r.json(); } catch (e) { console.error(e); }
+            var reply = (data && typeof data.reply === 'string') ? data.reply : '';
+            var s2 = nearBottom();
+            p.querySelector('.body').textContent = reply || EMPTY_REPLY;
+            finishBubble(p);
+            settle(s2, true);
+          }
+        } catch (e) {
+          console.error(e);
+          errorize(p, ERR_GENERIC, message);
+        }
+        setBusy(false);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (busy) return;
+        var m = q.value.trim();
+        if (!m) return;
+        q.value = '';
+        ask(m);
+      });
+      var chips = document.querySelectorAll('.chip');
+      for (var i = 0; i < chips.length; i++) {
+        chips[i].addEventListener('click', function () {
+          if (busy) return;
+          var m = this.textContent.trim();
+          q.focus();
+          ask(m);
+        });
+      }
+    })();
   </script>
 </body>
 </html>
