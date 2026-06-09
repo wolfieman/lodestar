@@ -1,0 +1,31 @@
+{
+  // Test-only Wrangler config for the vitest-pool-workers integration suite.
+  //
+  // It mirrors wrangler.jsonc but OMITS the `ai` and `vectorize` bindings. Those
+  // are remote-only Cloudflare services with no local emulation, so the pool
+  // opens a "remote proxy session" for them at boot — which needs Cloudflare
+  // credentials and therefore FAILS in offline CI ("Failed to start the remote
+  // proxy session"). The integration tests run in TEST_MODE (BM25-only; they
+  // never call env.AI or env.VECTORIZE), so dropping those two bindings keeps the
+  // suite fully offline without changing what it exercises.
+  //
+  // Keep the kept fields in sync with wrangler.jsonc.
+  "name": "lodestar",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "../src/lodestar/static", "binding": "ASSETS" },
+  "vars": {
+    "TEST_MODE": "true",
+    "LODESTAR_MODEL": "claude-haiku-4-5-20251001",
+    "MAX_TOKENS": "1024",
+  },
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 12, "period": 60 },
+    },
+  ],
+  "rules": [{ "type": "Text", "globs": ["**/*.txt"], "fallthrough": true }],
+}

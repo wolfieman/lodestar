@@ -9,14 +9,15 @@ import { cloudflareTest } from "@cloudflare/vitest-pool-workers";
 // is Node-24-native. (The older 0.9 pool crashed on Node 24 with
 // `vm._setUnsafeEval is not a function`, which is why this used to be pinned to
 // Node 22; that workaround is gone.)
+//
+// Uses wrangler.test.jsonc (not wrangler.jsonc): the test config drops the `ai`
+// and `vectorize` bindings, which are remote-only and would make the pool open a
+// remote proxy session that fails in offline CI. TEST_MODE is set there, so the
+// suite stays fully offline (BM25-only mock; no AI/Vectorize/network).
 export default defineConfig({
   plugins: [
     cloudflareTest({
-      wrangler: { configPath: "./wrangler.jsonc" },
-      miniflare: {
-        // Offline: the integration tests use the TEST_MODE mock (no key/network).
-        bindings: { TEST_MODE: "true" },
-      },
+      wrangler: { configPath: "./wrangler.test.jsonc" },
     }),
   ],
   test: {
