@@ -16,11 +16,13 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write # gitleaks-action lists PR commits (and comments on leaks)
 
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # gitleaks-action lists PR commits (and comments on leaks)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -44,9 +46,9 @@ jobs:
           # TODO(promote-to-gate): after a clean period, replace the final
           #   `exit 0` with `exit 1` when $hits is non-empty, turning this from a
           #   warning into a blocking check. Tracked in standards/ci/README.md.
-          patterns='co-authored-by:.*(claude|anthropic|copilot|chatgpt|gpt-)|generated (with|by) (claude|chatgpt|copilot|gpt|anthropic|openai)'
+          patterns='(co-authored-by|generated (with|by)|(authored|written|verified|reviewed) by).*(claude|anthropic|copilot|chatgpt|openai|gemini|gpt-)'
           hits=$(git ls-files -z \
-            | grep -zvE '(^|/)(standards|notes)/|(^|/)\.(claude|github|githooks)/|(^|/)(CLAUDE|MEMORY)\.md$' \
+            | grep -zvE '^(standards|notes)/|(^|/)\.(claude|github|githooks)/|(^|/)(CLAUDE|MEMORY)\.md$' \
             | xargs -0 -r grep -IinE "$patterns" 2>/dev/null || true)
           if [ -n "$hits" ]; then
             {
