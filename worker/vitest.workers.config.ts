@@ -1,23 +1,25 @@
-import { defineWorkersConfig } from "@cloudflare/vitest-pool-workers/config";
+import { defineConfig } from "vitest/config";
+import { cloudflareTest } from "@cloudflare/vitest-pool-workers";
 
 // Integration suite that exercises the Worker via SELF.fetch inside workerd
-// (Miniflare) for runtime fidelity — used for chat.test.ts (later Phase 2 step:
-// the request pipeline). Run with:  npx vitest run --config vitest.workers.config.ts
+// (Miniflare) for runtime fidelity. Run with:
+//   npx vitest run --config vitest.workers.config.ts
 //
-// NOTE: @cloudflare/vitest-pool-workers crashes on Node 24
-// (`vm._setUnsafeEval is not a function`); run this suite on Node 22 LTS,
-// matching the CI `worker` job's pinned Node version.
-export default defineWorkersConfig({
+// Runs on Node 24: the @cloudflare/vitest-pool-workers 0.16 / vitest 4 toolchain
+// is Node-24-native. (The older 0.9 pool crashed on Node 24 with
+// `vm._setUnsafeEval is not a function`, which is why this used to be pinned to
+// Node 22; that workaround is gone.)
+export default defineConfig({
+  plugins: [
+    cloudflareTest({
+      wrangler: { configPath: "./wrangler.jsonc" },
+      miniflare: {
+        // Offline: the integration tests use the TEST_MODE mock (no key/network).
+        bindings: { TEST_MODE: "true" },
+      },
+    }),
+  ],
   test: {
     include: ["test/**/*.workers.test.ts"],
-    poolOptions: {
-      workers: {
-        wrangler: { configPath: "./wrangler.jsonc" },
-        miniflare: {
-          // Offline: the integration tests use the TEST_MODE mock (no key/network).
-          bindings: { TEST_MODE: "true" },
-        },
-      },
-    },
   },
 });

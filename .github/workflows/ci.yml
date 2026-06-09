@@ -39,25 +39,30 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up Node (22 LTS)
+      - name: Set up Node 24
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
           cache: npm
           cache-dependency-path: worker/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint (eslint)
+        run: npx eslint .
+
+      - name: Format check (prettier)
+        run: npx prettier --check .
+
       - name: Typecheck (tsc)
         run: npx tsc --noEmit
 
       - name: Unit tests (vitest, offline)
-        # Runs the default config only. The *.workers.test.ts SELF.fetch suite
-        # (vitest.workers.config.ts) is intentionally excluded: the same
-        # scenarios are covered Node-natively by chat.test.ts, and the
-        # workers-pool runner is kept staged until it runs cleanly in CI.
         run: npx vitest run
+
+      - name: Worker integration tests (workerd via Miniflare, offline)
+        run: npx vitest run --config vitest.workers.config.ts
 
   # Deploys are handled by Cloudflare Workers Builds (the Worker's native Git
   # connection to this repo): on a push to main, Cloudflare runs

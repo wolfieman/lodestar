@@ -4,14 +4,11 @@
 //
 // Run with:  npx vitest run --config vitest.workers.config.ts
 //
-// NOTE: @cloudflare/vitest-pool-workers@0.9.x crashes on Node 24
-// (`vm._setUnsafeEval is not a function` in the bundled workerd runtime), so
-// this *.workers.test.ts suite is excluded from the default Node-24 run and is
-// executed by the CI `worker` job on Node 22 LTS. The SAME pipeline assertions
-// run on every machine/Node via test/chat.test.ts, which invokes the Worker's
-// fetch handler directly with a stub Env (including a stub rate limiter). When
-// the toolchain is bumped to a Node-24-compatible pool, this becomes the
-// canonical integration run.
+// This *.workers.test.ts suite runs under @cloudflare/vitest-pool-workers 0.16
+// (vitest 4) on Node 24 via vitest.workers.config.ts; it is excluded from the
+// default config and run as its own step. The SAME pipeline assertions also run
+// Node-natively via test/chat.test.ts (the Worker's fetch handler with a stub
+// Env + stub rate limiter), so the behavior is covered even without workerd.
 
 import { SELF } from "cloudflare:test";
 import { describe, expect, it } from "vitest";

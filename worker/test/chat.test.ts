@@ -1,9 +1,9 @@
 // Pipeline integration tests that run in the DEFAULT Node environment by calling
 // the Worker's exported fetch handler directly with a stub Env.
 //
-// Why not SELF.fetch here: @cloudflare/vitest-pool-workers@0.9.x crashes on this
-// machine's Node 24 (`vm._setUnsafeEval is not a function`). The same scenarios
-// run through real workerd in test/chat.workers.test.ts on Node 22 (CI). These
+// Why not SELF.fetch here: this default suite stays Node-native (no workerd) for
+// speed and portability. The same scenarios also run through real workerd in
+// test/chat.workers.test.ts (vitest.workers.config.ts). These
 // assertions exercise the REAL pipeline (chat.ts -> bm25/prompt/safety/mock/sse)
 // — only the Cloudflare runtime shell and the live ratelimit binding are stubbed.
 // The injected stub limiter implements the documented 12/60s policy, so the 429

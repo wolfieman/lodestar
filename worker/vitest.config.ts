@@ -4,11 +4,10 @@
 // APIs, so they need no Miniflare. JSON imports (data/knowledge.json, fixtures)
 // and .txt imports are handled by the inline-string transform below.
 //
-// The SELF.fetch integration suite runs under @cloudflare/vitest-pool-workers
-// via vitest.workers.config.ts (file glob *.workers.test.ts) on the CI `worker`
-// job (Node 22 LTS). That pool crashes on Node 24 (workerd `vm._setUnsafeEval`
-// shim), so *.workers.test.ts is EXCLUDED here and the same scenarios are
-// covered Node-natively by chat.test.ts.
+// The SELF.fetch integration suite runs separately under
+// @cloudflare/vitest-pool-workers via vitest.workers.config.ts (file glob
+// *.workers.test.ts), kept a separate config for workerd runtime fidelity; it is
+// EXCLUDED here. Both configs run on Node 24 (pool 0.16 + vitest 4).
 import { readFileSync } from "node:fs";
 
 import { defineConfig } from "vitest/config";
