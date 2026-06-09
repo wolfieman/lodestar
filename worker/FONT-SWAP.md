@@ -80,7 +80,7 @@ is required.
 ## Post-swap verification (at cutover)
 
 - `wrangler dev`, then load `/`: confirm the network panel shows the two
-  `/static/fonts/*.woff2` requests (200, served via the /static/* passthrough)
+  `/static/fonts/*.woff2` requests (200, served via the /static/\* passthrough)
   and **no** request to `fonts.googleapis.com` or `fonts.gstatic.com`.
 - Confirm the LODESTAR wordmark renders in Cinzel 700 and body/subtitle/chips in
   Inter (no FOUT beyond the `font-display:swap` flash).

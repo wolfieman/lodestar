@@ -85,17 +85,12 @@ export class HybridRetriever implements Retriever {
     for (const hits of rankedLists) {
       hits.forEach((snippet, i) => {
         const rank = i + 1; // enumerate(hits, start=1)
-        scores.set(
-          snippet.id,
-          (scores.get(snippet.id) ?? 0) + 1.0 / (this.rrfK + rank),
-        );
+        scores.set(snippet.id, (scores.get(snippet.id) ?? 0) + 1.0 / (this.rrfK + rank));
         found.set(snippet.id, snippet);
       });
     }
     // sorted(scores, key=score, reverse=True) — stable over insertion order.
-    const order = [...scores.keys()].sort(
-      (a, b) => (scores.get(b) ?? 0) - (scores.get(a) ?? 0),
-    );
+    const order = [...scores.keys()].sort((a, b) => (scores.get(b) ?? 0) - (scores.get(a) ?? 0));
     return order.slice(0, k).map((id) => found.get(id)!);
   }
 }

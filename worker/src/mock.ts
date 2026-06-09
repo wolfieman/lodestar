@@ -53,12 +53,9 @@ export function pyRepr(s: string): string {
 
 /** Build the MockProvider-parity reply text for a message + assembled system. */
 export function mockReply(message: string, system: string): string {
-  const grounded = system.toLowerCase().includes("reference material")
-    ? "grounded"
-    : "ungrounded";
+  const grounded = system.toLowerCase().includes("reference material") ? "grounded" : "ungrounded";
   return (
-    "[TEST_MODE] Lodestar (HBCU career coach) would answer " +
-    `${pyRepr(message)} [${grounded}].`
+    "[TEST_MODE] Lodestar (HBCU career coach) would answer " + `${pyRepr(message)} [${grounded}].`
   );
 }
 

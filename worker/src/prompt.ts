@@ -34,7 +34,5 @@ export function formatSnippets(snippets: Snippet[]): string {
   if (snippets.length === 0) {
     return "";
   }
-  return snippets
-    .map((s) => `### ${s.title} (${s.category})\n${s.content}`)
-    .join("\n\n");
+  return snippets.map((s) => `### ${s.title} (${s.category})\n${s.content}`).join("\n\n");
 }

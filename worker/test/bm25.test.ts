@@ -57,9 +57,7 @@ describe("BM25Retriever.retrieve filters", () => {
   });
 
   it("returns [] for a query with no vocabulary hits", () => {
-    const fc = (fixtures.cases as FixtureCase[]).find(
-      (c) => c.query === "zzqqxx flibbertigibbet",
-    )!;
+    const fc = (fixtures.cases as FixtureCase[]).find((c) => c.query === "zzqqxx flibbertigibbet")!;
     expect(fc.scores.every((s) => s <= 0)).toBe(true); // fixture is all-zero
     expect(retriever.retrieve(fc.query, 4)).toEqual([]);
   });
@@ -71,9 +69,7 @@ describe("BM25Retriever.retrieve filters", () => {
 
   it("caps results when fewer than k positives exist", () => {
     // "scholarship" has exactly 4 positive hits in the fixture.
-    const fc = (fixtures.cases as FixtureCase[]).find(
-      (c) => c.query === "scholarship",
-    )!;
+    const fc = (fixtures.cases as FixtureCase[]).find((c) => c.query === "scholarship")!;
     const positiveCount = fc.scores.filter((s) => s > 0).length;
     const top = retriever.retrieve("scholarship", 10);
     expect(top.length).toBe(positiveCount);

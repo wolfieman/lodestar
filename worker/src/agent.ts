@@ -86,8 +86,7 @@ export function retrieveKnowledgeTool(retriever: Retriever): ToolSpec {
 export function webSearchTool(): ToolSpec {
   return {
     name: "web_search",
-    description:
-      "Search the web for current scholarships, internships, and job postings.",
+    description: "Search the web for current scholarships, internships, and job postings.",
     input_schema: {
       type: "object",
       properties: {
@@ -107,8 +106,7 @@ export function webSearchTool(): ToolSpec {
 }
 
 /** anthropic.py:102 parity: the max_iters exhaustion reply. */
-export const MAX_ITERS_REPLY =
-  "I couldn't complete that within the allotted reasoning steps.";
+export const MAX_ITERS_REPLY = "I couldn't complete that within the allotted reasoning steps.";
 
 // --- run_tools() port with streaming -----------------------------------------
 
@@ -168,8 +166,7 @@ export async function runAgentStream(options: {
   let stopReason: string | null = null;
 
   for (let iter = 0; iter < maxIters; iter += 1) {
-    const stream =
-      iter === 0 ? firstStream : await createNext(convo);
+    const stream = iter === 0 ? firstStream : await createNext(convo);
 
     // Re-assemble the full content blocks while forwarding text deltas live.
     const blocks: ContentBlock[] = [];
@@ -191,10 +188,7 @@ export async function runAgentStream(options: {
           blocks.push({ type: "text", text: "" });
         }
       } else if (event.type === "content_block_delta" && event.delta) {
-        if (
-          event.delta.type === "text_delta" &&
-          typeof event.delta.text === "string"
-        ) {
+        if (event.delta.type === "text_delta" && typeof event.delta.text === "string") {
           const last = blocks[blocks.length - 1];
           if (last && last.type === "text") {
             last.text += event.delta.text;
@@ -217,10 +211,7 @@ export async function runAgentStream(options: {
         const last = blocks[blocks.length - 1];
         if (last && last.type === "tool_use" && partialJson.length > 0) {
           try {
-            last.input = JSON.parse(partialJson.join("")) as Record<
-              string,
-              unknown
-            >;
+            last.input = JSON.parse(partialJson.join("")) as Record<string, unknown>;
           } catch {
             last.input = {};
           }
@@ -244,9 +235,7 @@ export async function runAgentStream(options: {
     for (const block of blocks) {
       if (block.type === "tool_use") {
         const tool = toolMap.get(block.name);
-        const output = tool
-          ? await tool.func(block.input)
-          : `Unknown tool: ${block.name}`;
+        const output = tool ? await tool.func(block.input) : `Unknown tool: ${block.name}`;
         results.push({
           type: "tool_result",
           tool_use_id: block.id,

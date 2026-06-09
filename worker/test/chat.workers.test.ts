@@ -94,9 +94,7 @@ describe("/api/chat TEST_MODE streaming", () => {
       .map((m) => JSON.parse(m[1]).text)
       .join("");
     expect(
-      text.startsWith(
-        "[TEST_MODE agent] called tool 'retrieve_knowledge'. Result preview: ",
-      ),
+      text.startsWith("[TEST_MODE agent] called tool 'retrieve_knowledge'. Result preview: "),
     ).toBe(true);
   });
 });

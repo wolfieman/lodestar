@@ -38,12 +38,7 @@ export class BM25Okapi {
   /** Word -> idf (after negative-idf flooring). */
   private readonly idf: Map<string, number>;
 
-  constructor(
-    corpus: string[][],
-    k1 = 1.5,
-    b = 0.75,
-    epsilon = 0.25,
-  ) {
+  constructor(corpus: string[][], k1 = 1.5, b = 0.75, epsilon = 0.25) {
     this.k1 = k1;
     this.b = b;
     this.epsilon = epsilon;
@@ -76,8 +71,7 @@ export class BM25Okapi {
     let idfSum = 0;
     const negativeIdfs: string[] = [];
     for (const [word, freq] of nd) {
-      const idf =
-        Math.log(this.corpusSize - freq + 0.5) - Math.log(freq + 0.5);
+      const idf = Math.log(this.corpusSize - freq + 0.5) - Math.log(freq + 0.5);
       this.idf.set(word, idf);
       idfSum += idf;
       if (idf < 0) {
@@ -102,9 +96,7 @@ export class BM25Okapi {
       }
       for (let i = 0; i < this.corpusSize; i++) {
         const qFreq = this.docFreqs[i].get(q) ?? 0;
-        const denom =
-          qFreq +
-          this.k1 * (1 - this.b + (this.b * this.docLen[i]) / this.avgdl);
+        const denom = qFreq + this.k1 * (1 - this.b + (this.b * this.docLen[i]) / this.avgdl);
         score[i] += (idf * (qFreq * (this.k1 + 1))) / denom;
       }
     }
@@ -119,9 +111,7 @@ export class BM25Retriever {
 
   constructor(snippets: Snippet[]) {
     this.snippets = snippets;
-    const corpus = snippets.map((s) =>
-      tokenize(`${s.title} ${s.content} ${s.category}`),
-    );
+    const corpus = snippets.map((s) => tokenize(`${s.title} ${s.content} ${s.category}`));
     this.bm25 = new BM25Okapi(corpus);
   }
 

@@ -21,9 +21,7 @@ const INDEX = "lodestar-kb";
 const token = process.env.CLOUDFLARE_API_TOKEN;
 const account = process.env.CLOUDFLARE_ACCOUNT_ID;
 if (!token || !account) {
-  console.error(
-    "Set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID (see wrangler whoami).",
-  );
+  console.error("Set CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID (see wrangler whoami).");
   process.exit(1);
 }
 
@@ -100,5 +98,6 @@ const queryRes = await fetch(`${API}/vectorize/v2/indexes/${INDEX}/query`, {
 const matches = (await queryRes.json()).result?.matches ?? [];
 console.log(
   "sanity query 'scholarships for HBCU students' ->",
-  matches.map((m) => `${m.id} (${m.score.toFixed(3)})`).join(", ") || "(no matches yet — indexing may still be in progress)",
+  matches.map((m) => `${m.id} (${m.score.toFixed(3)})`).join(", ") ||
+    "(no matches yet — indexing may still be in progress)",
 );

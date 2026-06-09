@@ -1,0 +1,10 @@
+node_modules
+dist
+.wrangler
+_site
+package-lock.json
+*.min.js
+*.min.css
+# Test fixtures are data (parity tests may byte-compare them); never reformat.
+test/fixtures
+**/fixtures/

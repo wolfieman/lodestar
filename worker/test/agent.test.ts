@@ -41,9 +41,7 @@ describe("web_search stub parity (tools.py fixture, exercises pyRepr)", () => {
 
 describe("string parity", () => {
   it("routing hint matches agent.py construction", () => {
-    expect(routingHint(fixture.routing_hint.category)).toBe(
-      fixture.routing_hint.text,
-    );
+    expect(routingHint(fixture.routing_hint.category)).toBe(fixture.routing_hint.text);
   });
 
   it("max-iters reply matches anthropic.py:102", () => {
@@ -95,11 +93,7 @@ function textIteration(text: string, stop = "end_turn"): AgentStreamEvent[] {
   ];
 }
 
-function toolIteration(
-  name: string,
-  jsonChunks: string[],
-  preamble = "",
-): AgentStreamEvent[] {
+function toolIteration(name: string, jsonChunks: string[], preamble = ""): AgentStreamEvent[] {
   const events: AgentStreamEvent[] = [];
   if (preamble) {
     events.push(
@@ -139,10 +133,7 @@ function collectorSink(): { sink: SseSink; deltas(): string[] } {
         .join("")
         .split("\n\n")
         .filter((e) => e.startsWith("event: delta"))
-        .map(
-          (e) =>
-            (JSON.parse(e.split("\ndata: ")[1]) as { text: string }).text,
-        ),
+        .map((e) => (JSON.parse(e.split("\ndata: ")[1]) as { text: string }).text),
   };
 }
 
@@ -180,9 +171,7 @@ describe("runAgentStream", () => {
     const convos: unknown[][] = [];
     const { sink, deltas } = collectorSink();
     const result = await runAgentStream({
-      firstStream: makeStream(
-        toolIteration("echo", ['{"que', 'ry": "x"}'], "Checking."),
-      ),
+      firstStream: makeStream(toolIteration("echo", ['{"que', 'ry": "x"}'], "Checking.")),
       createNext: (convo) => {
         convos.push(JSON.parse(JSON.stringify(convo)) as unknown[]);
         return Promise.resolve(makeStream(textIteration("Answer.")));
@@ -232,8 +221,7 @@ describe("runAgentStream", () => {
     const { sink, deltas } = collectorSink();
     const result = await runAgentStream({
       firstStream: makeStream(toolIteration("echo", ["{}"])),
-      createNext: () =>
-        Promise.resolve(makeStream(toolIteration("echo", ["{}"]))),
+      createNext: () => Promise.resolve(makeStream(toolIteration("echo", ["{}"]))),
       message: "q",
       tools: [echoTool("echo", calls)],
       sink,

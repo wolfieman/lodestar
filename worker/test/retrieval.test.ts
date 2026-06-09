@@ -37,9 +37,7 @@ describe("RRF fusion parity (hybrid.py fixture)", () => {
 
 // --- VectorRetriever ----------------------------------------------------------
 
-const BY_ID: ReadonlyMap<string, Snippet> = new Map(
-  ["s1", "s2", "s3"].map((id) => [id, snip(id)]),
-);
+const BY_ID: ReadonlyMap<string, Snippet> = new Map(["s1", "s2", "s3"].map((id) => [id, snip(id)]));
 
 function okAi(): AiBinding {
   return { run: () => Promise.resolve({ data: [[0.1, 0.2, 0.3]] }) };

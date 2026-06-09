@@ -39,11 +39,7 @@ export function sendDelta(sink: SseSink, text: string): void {
  * FULL reply ([] if none); `stop_reason` mirrors the Anthropic stop_reason so the
  * frontend can show the truncation note when it is "max_tokens".
  */
-export function sendDone(
-  sink: SseSink,
-  pii: string[],
-  stopReason: string | null,
-): void {
+export function sendDone(sink: SseSink, pii: string[], stopReason: string | null): void {
   sendEvent(sink, "done", { pii, stop_reason: stopReason });
 }
 

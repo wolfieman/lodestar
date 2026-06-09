@@ -21,11 +21,7 @@
 // detect_pii on the full displayed reply is post-hoc and advisory, shipped in
 // the `done` payload's `pii` array.
 
-import Anthropic, {
-  APIError,
-  AuthenticationError,
-  RateLimitError,
-} from "@anthropic-ai/sdk";
+import Anthropic, { APIError, AuthenticationError, RateLimitError } from "@anthropic-ai/sdk";
 
 import {
   routingHint,
@@ -41,22 +37,14 @@ import { chunkText, mockAgentReply } from "./mock";
 import { buildSystem, formatSnippets } from "./prompt";
 import { HybridRetriever, VectorRetriever, type Retriever } from "./retrieval";
 import { detectPii, PII_BLOCK_DETAIL } from "./safety";
-import {
-  SSE_HEADERS,
-  sendDelta,
-  sendDone,
-  sendError,
-  type SseSink,
-} from "./sse";
+import { SSE_HEADERS, sendDelta, sendDone, sendError, type SseSink } from "./sse";
 import type { Env, Snippet } from "./types";
 import knowledge from "../../data/knowledge.json";
 
 // Module-level KB + BM25 index: built once per isolate (sparse.py parity).
 const SNIPPETS = knowledge as Snippet[];
 const RETRIEVER = new BM25Retriever(SNIPPETS);
-const BY_ID: ReadonlyMap<string, Snippet> = new Map(
-  SNIPPETS.map((s) => [s.id, s]),
-);
+const BY_ID: ReadonlyMap<string, Snippet> = new Map(SNIPPETS.map((s) => [s.id, s]));
 
 // config.py:13-18 truthy set, exact.
 const TRUTHY = new Set(["1", "true", "yes", "on"]);
@@ -94,10 +82,7 @@ function codePointLength(s: string): number {
 /** Hybrid retriever per request (dense side needs env bindings); degrades to
  *  BM25-only inside VectorRetriever if Workers AI / Vectorize fail. */
 function makeRetriever(env: Env): Retriever {
-  return new HybridRetriever(
-    new VectorRetriever(env.AI, env.VECTORIZE, BY_ID),
-    RETRIEVER,
-  );
+  return new HybridRetriever(new VectorRetriever(env.AI, env.VECTORIZE, BY_ID), RETRIEVER);
 }
 
 /** agent.py:26-31: build_system() (no pre-injected context) + routing hint. */
@@ -157,9 +142,7 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
  * delivery.
  */
 function streamMock(message: string): Response {
-  const result =
-    formatSnippets(RETRIEVER.retrieve(message, 4)) ||
-    "No matching knowledge found.";
+  const result = formatSnippets(RETRIEVER.retrieve(message, 4)) || "No matching knowledge found.";
   const text = mockAgentReply("retrieve_knowledge", result);
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -188,10 +171,7 @@ function streamMock(message: string): Response {
 async function streamLive(message: string, env: Env): Promise<Response> {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
   const maxTokens = Number.parseInt(env.MAX_TOKENS, 10) || 1024;
-  const tools: ToolSpec[] = [
-    retrieveKnowledgeTool(makeRetriever(env)),
-    webSearchTool(),
-  ];
+  const tools: ToolSpec[] = [retrieveKnowledgeTool(makeRetriever(env)), webSearchTool()];
   const system = agentSystem(message);
 
   // Shared params for every loop iteration (anthropic.py:60-79 parity:
@@ -200,9 +180,7 @@ async function streamLive(message: string, env: Env): Promise<Response> {
     client.messages.create({
       model: env.LODESTAR_MODEL,
       max_tokens: maxTokens,
-      system: [
-        { type: "text", text: system, cache_control: { type: "ephemeral" } },
-      ],
+      system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
       tools: tools.map((t) => ({
         name: t.name,
         description: t.description,

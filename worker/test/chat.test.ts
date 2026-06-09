@@ -101,11 +101,7 @@ function get(path: string, env: Env): Promise<Response> {
   return worker.fetch(new Request(`https://worker.test${path}`), env);
 }
 
-function postChat(
-  message: unknown,
-  env: Env,
-  ip = "1.2.3.4",
-): Promise<Response> {
+function postChat(message: unknown, env: Env, ip = "1.2.3.4"): Promise<Response> {
   return worker.fetch(
     new Request("https://worker.test/api/chat", {
       method: "POST",
@@ -236,8 +232,7 @@ describe("POST /api/chat TEST_MODE streaming", () => {
       formatSnippets(new BM25Retriever(KB).retrieve("How do I write a resume?", 4)) ||
       "No matching knowledge found.";
     expect(text).toBe(mockAgentReply("retrieve_knowledge", result));
-    expect(text.startsWith("[TEST_MODE agent] called tool 'retrieve_knowledge'."))
-      .toBe(true);
+    expect(text.startsWith("[TEST_MODE agent] called tool 'retrieve_knowledge'.")).toBe(true);
 
     // done payload: pii [] (mock text has none) and a stop_reason field present.
     const doneMatch = body.match(/event: done\ndata: (.*)\n/)!;

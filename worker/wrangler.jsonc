@@ -19,7 +19,7 @@
     // Exact parity with the live cPanel env value (full dated id of claude-haiku-4-5).
     "LODESTAR_MODEL": "claude-haiku-4-5-20251001",
     // anthropic.py complete() default.
-    "MAX_TOKENS": "1024"
+    "MAX_TOKENS": "1024",
   },
 
   // Hybrid RAG: Vectorize holds the seeded KB vectors (scripts/seed-vectorize.mjs);
@@ -35,8 +35,8 @@
     {
       "name": "RATE_LIMITER",
       "namespace_id": "1001",
-      "simple": { "limit": 12, "period": 60 }
-    }
+      "simple": { "limit": 12, "period": 60 },
+    },
   ],
 
   // Imports src/system-prompt.txt and src/context-preamble.txt as strings.
@@ -50,6 +50,6 @@
   // www serves the same app — kept alive for old links and type-in traffic.
   "routes": [
     { "pattern": "lodestar.sanyer.org", "custom_domain": true },
-    { "pattern": "www.lodestar.sanyer.org", "custom_domain": true }
-  ]
+    { "pattern": "www.lodestar.sanyer.org", "custom_domain": true },
+  ],
 }
