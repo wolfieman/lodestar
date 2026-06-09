@@ -1,0 +1,15 @@
+# Secret scanning (gitleaks) + ruff lint/format, run before every commit.
+# Complements the per-repo commit-msg guard in .git/hooks/.
+# Enable once per clone:  uvx pre-commit install
+# Refresh pinned revs:     uvx pre-commit autoupdate
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.16
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
