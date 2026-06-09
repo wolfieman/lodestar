@@ -1,0 +1,14 @@
+# Master template. Copied to each repo's .github/dependabot.yml with
+# LODESTAR replaced by the repo's commit tag (EVPULSE, ORCHSTR, ...).
+#
+# Keeps SHA-pinned GitHub Actions current: floating tags were replaced with
+# commit SHAs (supply-chain hardening), which never auto-update, so Dependabot
+# opens a monthly PR to bump each pin (SHA + the trailing version comment).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "[LODESTAR][CHORE]"
