@@ -8,6 +8,9 @@ artifacts into a red build:
 * ``worker/src/context-preamble.txt`` equals the ``build_system`` context joiner.
 * User-facing wording (PII gate, 400, 429) appears verbatim in the Worker source.
 * ``worker/test/fixtures/bm25_parity.json`` is fresh (regenerate and compare).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

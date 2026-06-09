@@ -1,6 +1,9 @@
 """Integration test — calls the live OpenAI API.
 
 Auto-skips unless ``OPENAI_API_KEY`` is set and ``TEST_MODE`` is disabled.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 import os

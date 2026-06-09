@@ -2,6 +2,9 @@
 
 Importing the module runs the @mcp.tool() registrations, so a clean import already
 proves the server wires up. The tool logic is tested via the helper functions.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 import pytest

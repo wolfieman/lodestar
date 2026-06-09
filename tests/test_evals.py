@@ -1,4 +1,8 @@
-"""Unit test for the eval harness mechanics (offline; mock answers + mock judge)."""
+"""Unit test for the eval harness mechanics (offline; mock answers + mock judge).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 import pytest
 

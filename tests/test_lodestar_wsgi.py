@@ -1,4 +1,8 @@
-"""Unit tests for the native WSGI (Flask) app used in shared-hosting deploys."""
+"""Unit tests for the native WSGI (Flask) app used in shared-hosting deploys.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 from pathlib import Path
 

@@ -5,6 +5,9 @@ against ``rubric.md``. Offline (TEST_MODE) it runs end-to-end with mock answers 
 judge (scores marked unparseable) to validate mechanics; live runs produce real scores.
 
 Run: ``uv run python -m evals.runner``
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

@@ -1,4 +1,8 @@
-"""Agent tools. ``Tool`` is a model-agnostic spec: name + JSON schema + function."""
+"""Agent tools. ``Tool`` is a model-agnostic spec: name + JSON schema + function.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 from __future__ import annotations
 

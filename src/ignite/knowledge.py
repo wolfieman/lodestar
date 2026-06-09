@@ -3,6 +3,9 @@
 Dependency-light retrieval (stdlib only) over freshly authored sample data in
 ``data/knowledge.json``. Not a vector database, and not copied from the original team
 CSVs — see ``docs/decisions.md``.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

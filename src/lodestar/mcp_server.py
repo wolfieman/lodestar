@@ -3,6 +3,9 @@
 Lets Lodestar plug into Claude Desktop and other MCP clients as a set of career-advice
 tools. Run with: ``uv run python -m lodestar.mcp_server`` (stdio transport).
 See ``docs/mcp.md`` for client wiring.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

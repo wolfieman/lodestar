@@ -19,6 +19,9 @@ freshness is enforced in ``tests/test_worker_parity.py``. Python==fixture and
 TS==fixture transitively proves Python==TS without a cross-language runner.
 
 Usage (from the repo root): ``uv run python scripts/gen_agent_fixtures.py``
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

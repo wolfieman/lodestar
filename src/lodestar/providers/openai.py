@@ -1,6 +1,9 @@
 """Optional OpenAI provider — kept so the system is genuinely model-agnostic.
 
 Wolfgang defaults to Claude; this adapter exists for completeness/portability.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

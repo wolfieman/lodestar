@@ -1,6 +1,9 @@
 """Symmetric encryption helpers — a small FERPA/GDPR data-handling demonstration.
 
 Illustrative, not a production data pipeline. See ``docs/privacy-policy.md``.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

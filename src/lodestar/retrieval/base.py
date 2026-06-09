@@ -1,4 +1,8 @@
-"""Retrieval interfaces and the core knowledge record."""
+"""Retrieval interfaces and the core knowledge record.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 from __future__ import annotations
 

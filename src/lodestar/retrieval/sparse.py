@@ -1,4 +1,8 @@
-"""Sparse (keyword) retrieval via BM25 — no model or network required."""
+"""Sparse (keyword) retrieval via BM25 — no model or network required.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 from __future__ import annotations
 

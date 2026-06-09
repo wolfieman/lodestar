@@ -3,6 +3,9 @@
 TEST_MODE (default) wires the offline mock provider + a deterministic hash embedder,
 so the app runs with no network or API key. Otherwise it uses the configured provider
 (Claude by default) and local fastembed embeddings.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

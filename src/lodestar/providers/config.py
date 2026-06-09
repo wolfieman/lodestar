@@ -2,6 +2,9 @@
 
 ``TEST_MODE`` (default on) → offline ``MockProvider``. Otherwise ``LODESTAR_PROVIDER``
 (default ``anthropic``) selects the provider; ``LODESTAR_MODEL`` sets the model.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

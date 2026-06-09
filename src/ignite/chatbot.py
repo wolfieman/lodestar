@@ -3,6 +3,9 @@
 Clean-room reimplementation written from ``product/ignite-ai/instructions.md``. A
 ``TEST_MODE`` gate returns a deterministic mock so the chatbot runs offline and unit
 tests need no API key.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

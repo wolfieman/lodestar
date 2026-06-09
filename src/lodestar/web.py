@@ -6,6 +6,9 @@ mock answers; set ``ANTHROPIC_API_KEY`` and ``TEST_MODE=false`` for live Claude.
 
 A public live-key deployment is protected by a per-IP rate limit
 (``RATE_LIMIT_PER_MIN``, default 12) and a max message length.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

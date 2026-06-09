@@ -3,6 +3,9 @@
 Reconstructed from ``product/ignite-ai/instructions.md`` and adapted from Wolfgang's
 orchestrator prompt frameworks: BRIDGE (answer scaffolding), clarification-patterns
 (ask-before-answering), and verify-checklist (self-check before high-stakes advice).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

@@ -2,6 +2,9 @@
 
 Reads ``.env``. With ``TEST_MODE=true`` (default) it runs fully offline (mock provider +
 hash embeddings). Set ``TEST_MODE=false`` and ``ANTHROPIC_API_KEY`` for live Claude.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

@@ -1,4 +1,8 @@
-"""IgniteAgent — routes the query, then runs the provider's tool-use loop."""
+"""IgniteAgent — routes the query, then runs the provider's tool-use loop.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 from __future__ import annotations
 

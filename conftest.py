@@ -4,6 +4,9 @@
   even if a local ``.env`` sets ``TEST_MODE=false`` (web.py calls ``load_dotenv()`` at
   import). ``setdefault`` respects a shell ``TEST_MODE=false`` for integration runs.
 - Put the repo root on ``sys.path`` so the ``evals/`` ops package imports.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 import os

@@ -3,6 +3,9 @@
 Written fresh from the IgniteAI behavioral specification
 (``product/ignite-ai/instructions.md``). This is a clean-room reconstruction of the
 GPT's *behavior*, not its verbatim hidden prompt (see ``docs/decisions.md``).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

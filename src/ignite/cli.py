@@ -2,6 +2,9 @@
 
 Reads ``.env``. ``TEST_MODE=true`` (default) runs offline; set ``TEST_MODE=false``
 and ``OPENAI_API_KEY`` for live responses (the 2024 original was OpenAI-based).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

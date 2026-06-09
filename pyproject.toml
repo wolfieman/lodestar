@@ -52,7 +52,20 @@ target-version = "py314"
 exclude = [".venv", "_staging"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I"]
+# CPY (flake8-copyright) enforces the required authorship/license banner at the
+# tail of each module docstring; CPY001 finds it because every docstring closes
+# well within its 4096-byte head scan. CPY is a preview rule, so lint.preview is
+# enabled, scoped to lint ONLY (not the top-level [tool.ruff]) so the stable
+# formatter style is unchanged.
+preview = true
+select = ["E", "F", "W", "I", "CPY"]
+
+[tool.ruff.lint.flake8-copyright]
+# Match our exact banner copyright line (literal TOML string: no backslash escaping).
+notice-rgx = '(?i)Copyright\s+©\s+\d{4}\s+Wolfgang Sanyer'
+# Exempt the intentionally-empty tests/__init__.py (a 0-byte package marker); a
+# license banner on an empty file is noise. Any real module is far above 1 byte.
+min-file-size = 1
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

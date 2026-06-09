@@ -2,6 +2,9 @@
 
 Reciprocal Rank Fusion combines two ranked lists without needing comparable scores:
 each item gets ``sum(1 / (rrf_k + rank))`` across the retrievers, then we re-rank.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

@@ -1,4 +1,8 @@
-"""Offline, deterministic provider for TEST_MODE and unit tests (no network/key)."""
+"""Offline, deterministic provider for TEST_MODE and unit tests (no network/key).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 from __future__ import annotations
 

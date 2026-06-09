@@ -2,6 +2,9 @@
 
 Not a substitute for a full DLP pipeline — a pragmatic guard that lets the app avoid
 soliciting or echoing obvious personal identifiers. See ``docs/security.md``.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from __future__ import annotations

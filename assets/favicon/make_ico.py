@@ -1,6 +1,9 @@
 """Build the multi-resolution favicon.ico (16 + 32) from the rasterized PNGs.
 
 Run after ``node assets/favicon/generate.mjs``. Requires Pillow.
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
 """
 
 from pathlib import Path

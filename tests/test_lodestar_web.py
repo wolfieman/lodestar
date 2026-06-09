@@ -1,4 +1,8 @@
-"""Unit tests for the FastAPI web UI (offline, TEST_MODE mock)."""
+"""Unit tests for the FastAPI web UI (offline, TEST_MODE mock).
+
+Copyright © 2026 Wolfgang Sanyer
+Licensed under the Polyform Noncommercial License 1.0.0 (see LICENSE).
+"""
 
 import pytest
 from fastapi.testclient import TestClient
