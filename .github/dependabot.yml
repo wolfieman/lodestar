@@ -3,12 +3,17 @@
 #
 # Keeps SHA-pinned GitHub Actions current: floating tags were replaced with
 # commit SHAs (supply-chain hardening), which never auto-update, so Dependabot
-# opens a monthly PR to bump each pin (SHA + the trailing version comment).
+# proposes bumps, grouped into ONE monthly PR per repo (not one per action) to
+# keep branch/PR noise down. Major bumps are surfaced, not ignored.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     commit-message:
       prefix: "[LODESTAR][CHORE]"
