@@ -24,9 +24,9 @@
 
 ## Commits
 
-Format: `[LODESTAR][TYPE] imperative subject` (≤72 chars, per the orchestrator master convention).
+Format: `[LODESTAR][TYPE] imperative subject` (≤72 chars).
 Types: `FEAT`, `FIX`, `DOCS`, `META`, `REFAC`, `CHORE`, `TEST`.
-Full convention: `../orchestrator/.claude/CLAUDE.md`. **Never** add AI co-authorship trailers.
+Body explains the *why*. **Never** add AI co-authorship trailers, secrets, or absolute paths.
 
 ## Testing
 

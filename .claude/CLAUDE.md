@@ -2,7 +2,6 @@
 
 Project context for in-repo Claude sessions. Lodestar preserves and rebuilds **IgniteAI**,
 the HBCU student career-advice chatbot that won **first place at HP FOWA 2024** (Team 4).
-Cross-project conventions live in `../orchestrator/`.
 
 ## Project basics
 
@@ -31,4 +30,4 @@ to those rather than duplicating content here.
 
 ## Commit convention
 
-Use `[LODESTAR][TYPE]` prefix. Full convention: `../orchestrator/.claude/CLAUDE.md`.
+Use `[LODESTAR][TYPE]` prefix; see `CONTRIBUTING.md` for the full convention.
