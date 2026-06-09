@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write # gitleaks-action lists PR commits (and comments on leaks)
 
 jobs:
   gitleaks:
@@ -45,7 +46,7 @@ jobs:
           #   warning into a blocking check. Tracked in standards/ci/README.md.
           patterns='co-authored-by:.*(claude|anthropic|copilot|chatgpt|gpt-)|generated (with|by) (claude|chatgpt|copilot|gpt|anthropic|openai)'
           hits=$(git ls-files -z \
-            | grep -zvE '(^|/)(standards|notes)/|(^|/)\.(claude|github)/|(^|/)(CLAUDE|MEMORY)\.md$' \
+            | grep -zvE '(^|/)(standards|notes)/|(^|/)\.(claude|github|githooks)/|(^|/)(CLAUDE|MEMORY)\.md$' \
             | xargs -0 -r grep -IinE "$patterns" 2>/dev/null || true)
           if [ -n "$hits" ]; then
             {
