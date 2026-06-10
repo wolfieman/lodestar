@@ -16,7 +16,9 @@ answer **streamed** token-by-token. It is parity-tested against the Python sourc
 
 After editing `data/knowledge.json`, re-seed the vector index:
 `CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… node scripts/seed-vectorize.mjs`
-(from `worker/`; token needs Workers AI:Read + Vectorize:Edit).
+(from `worker/`; token needs Workers AI:Read + Vectorize:Edit). Index creation,
+disaster recovery, and orphan-vector cleanup after snippet deletions live in
+[`restore-runbook.md`](restore-runbook.md).
 
 ```bash
 cd worker
