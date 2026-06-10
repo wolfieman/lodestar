@@ -1,0 +1,70 @@
+# Generic CodeQL code-scanning template (ADVANCED setup: workflow committed in-repo).
+#
+# This is a STARTING TEMPLATE (like ci-python.yml, unlike content-guards.yml):
+# copy to .github/workflows/codeql.yml and EDIT THE LANGUAGE MATRIX per repo —
+# it is not copied verbatim. Advanced setup (committed YAML) is deliberate over
+# GitHub's dashboard-configured "default setup": the fleet rule is codify-in-repo,
+# so the scan config stays visible, reviewable, SHA-pinned, and Dependabot-bumped.
+#
+# PUBLIC repos only — code scanning on private repos requires paid GitHub
+# Advanced Security.
+#
+# Actions are SHA-pinned (a re-pointed tag can't change what runs); Dependabot
+# keeps the pins fresh (grouped, monthly). Refresh the SHAs here when the live
+# repos bump.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * 1' # Mondays 06:17 UTC — fixed quiet hour, off the :00 rush
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # checkout
+      security-events: write # upload SARIF results to code scanning
+      # GitHub's starter also grants `packages: read` (private CodeQL packs) and
+      # `actions: read` (private repos only) — neither applies to this fleet.
+
+    strategy:
+      fail-fast: false
+      # PER-REPO LANGUAGE MATRIX — edit for each repo; do not copy verbatim.
+      # Supported identifiers (docs: "Customizing your advanced setup for code
+      # scanning"): actions, c-cpp, csharp, go, java-kotlin,
+      # javascript-typescript, python, ruby, rust, swift.
+      # build-mode is `none` for interpreted languages (python,
+      # javascript-typescript, ruby, actions); compiled languages need
+      # none/autobuild/manual — `manual` also needs a build step before the
+      # analyze step (see GitHub's starter workflow).
+      matrix:
+        include:
+          - language: actions # scans .github/workflows/ itself — keep everywhere
+            build-mode: none
+          - language: python
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+        with:
+          category: "/language:${{ matrix.language }}"
