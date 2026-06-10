@@ -4,7 +4,7 @@ name: content-guards
 # (which only run in clones where `pre-commit install` / the git hook was set up).
 #
 #   1. gitleaks       — secret scanning. BLOCKING: a leaked secret fails CI.
-#   2. ai-signatures  — embedded AI-authorship signatures. WARN-only for now.
+#   2. ai-signatures  — embedded AI-authorship signatures. BLOCKING: a hit fails CI.
 #
 # This file is the single-source master in orchestrator/standards/ci/. It is
 # copied verbatim into each repo's .github/workflows/. Edit the master, then
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-      - name: Scan content for AI-authorship signatures (WARN, non-blocking)
+      - name: Scan content for AI-authorship signatures (BLOCKING)
         shell: bash
         run: |
           # Hard-ban signatures only (no fuzzy prose tells, which false-positive
@@ -43,26 +43,25 @@ jobs:
           # .github corpus is allowlisted because it quotes these very strings as
           # examples of what to ban.
           #
-          # TODO(promote-to-gate): after a clean period, replace the final
-          #   `exit 0` with `exit 1` when $hits is non-empty, turning this from a
-          #   warning into a blocking check. Tracked in standards/ci/README.md.
+          # Promoted to a blocking gate 2026-06-09 after a clean corpus period.
           patterns='(co-authored-by|generated (with|by)|(authored|written|verified|reviewed) by).*(claude|anthropic|copilot|chatgpt|openai|gemini|gpt-)'
           hits=$(git ls-files -z \
             | grep -zvE '^(standards|notes)/|(^|/)\.(claude|github|githooks)/|(^|/)(CLAUDE|MEMORY)\.md$' \
             | xargs -0 -r grep -IinE "$patterns" 2>/dev/null || true)
           if [ -n "$hits" ]; then
             {
-              echo "## AI-authorship signature scan — WARN (non-blocking)"
+              echo "## AI-authorship signature scan — FAIL (blocking)"
               echo
               echo "Embedded AI-authorship signatures were found. Remove them per the"
-              echo "no-AI-attribution rule. This is a warning for now and will become a"
-              echo "hard gate after a clean period."
+              echo "no-AI-attribution rule. This check is blocking: CI fails until the"
+              echo "signatures are removed."
               echo
               echo '```'
               echo "$hits"
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
-            echo "::warning::AI-authorship signatures found (see job summary); non-blocking for now."
+            echo "::error::AI-authorship signatures found (see job summary); this check is blocking."
+            exit 1
           else
             echo "No AI-authorship signatures found." >> "$GITHUB_STEP_SUMMARY"
           fi
