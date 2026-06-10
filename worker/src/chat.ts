@@ -9,7 +9,9 @@
 //      (agent.py:24-31 parity) — context arrives via the retrieve_knowledge
 //      tool, NOT pre-injected
 //   5. TEST_MODE -> streamed MockProvider.run_tools-parity reply; else the
-//      Claude tool-use loop (agent.ts), final answer streamed token-by-token
+//      daily budget gate (budget.ts; KV counter per UTC day -> 429 when
+//      exhausted, fail OPEN on KV errors) and then the Claude tool-use loop
+//      (agent.ts), final answer streamed token-by-token
 //   6. retrieve_knowledge = HYBRID retrieval: Workers AI embeddings (same model
 //      as the Python stack's fastembed) + Vectorize, RRF-fused with BM25; if
 //      the dense side fails it degrades to BM25-only (lean-build behavior)
@@ -33,6 +35,7 @@ import {
   type ToolSpec,
 } from "./agent";
 import { BM25Retriever } from "./bm25";
+import { checkAndConsume, parseBudget, secondsUntilUtcMidnight } from "./budget";
 import { chunkText, mockAgentReply } from "./mock";
 import { buildSystem, formatSnippets } from "./prompt";
 import { HybridRetriever, VectorRetriever, type Retriever } from "./retrieval";
@@ -56,13 +59,17 @@ function isTruthy(value: string | undefined): boolean {
 /** Exact wsgi.py wording/codes for the validation + rate-limit failures. */
 const MSG_LENGTH = "Message must be 1-1000 characters.";
 const MSG_RATE_LIMIT = "Rate limit exceeded; try again shortly.";
+/** Daily budget exhausted — the frontend renders any {detail} on !r.ok. */
+const MSG_BUDGET =
+  "Lodestar has reached its daily usage limit. It resets at midnight UTC. " +
+  "Please come back then.";
 /** Generic upstream message — never leaks key/auth specifics to the client. */
 const MSG_UPSTREAM = "Something went wrong on our end. Wait a moment and try again.";
 
-function json(body: unknown, status: number): Response {
+function json(body: unknown, status: number, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8" },
+    headers: { "content-type": "application/json; charset=utf-8", ...headers },
   });
 }
 
@@ -128,6 +135,24 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
   if (isTruthy(env.TEST_MODE)) {
     return streamMock(message);
   }
+
+  // Daily budget gate — LIVE requests only (the mock path above never reaches
+  // it), counted BEFORE any Anthropic client or stream exists. Fail OPEN on a
+  // KV error, mirroring the limiter in step 1: a KV blip should not become a
+  // chat outage while the per-IP limiter and the Anthropic spend cap still
+  // stand. (Strict fail-closed would be returning the 429 from the catch.)
+  const now = new Date();
+  try {
+    const verdict = await checkAndConsume(env.BUDGET_KV, parseBudget(env.DAILY_BUDGET), now);
+    if (verdict === "exhausted") {
+      return json({ detail: MSG_BUDGET }, 429, {
+        "retry-after": String(secondsUntilUtcMidnight(now)),
+      });
+    }
+  } catch (err) {
+    console.error("budget check error (failing open):", err);
+  }
+
   return streamLive(message, env);
 }
 

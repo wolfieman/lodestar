@@ -20,7 +20,15 @@
     "LODESTAR_MODEL": "claude-haiku-4-5-20251001",
     // anthropic.py complete() default.
     "MAX_TOKENS": "1024",
+    // Max live /api/chat requests per UTC day (budget.ts). An explicit "0"
+    // refuses all live traffic — a manual kill switch.
+    "DAILY_BUDGET": "300",
   },
+
+  // Daily budget counter: one KV key per UTC day (budget.ts). Unlike ai and
+  // vectorize, KV is fully Miniflare-emulated, so this binding IS mirrored in
+  // wrangler.test.jsonc.
+  "kv_namespaces": [{ "binding": "BUDGET_KV", "id": "79d6c2bbc3ce42d0868cce46d25e5fe4" }],
 
   // Hybrid RAG: Vectorize holds the seeded KB vectors (scripts/seed-vectorize.mjs);
   // Workers AI runs the SAME embedding model as the Python stack's fastembed

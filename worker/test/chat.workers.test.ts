@@ -10,8 +10,22 @@
 // Node-natively via test/chat.test.ts (the Worker's fetch handler with a stub
 // Env + stub rate limiter), so the behavior is covered even without workerd.
 
-import { SELF } from "cloudflare:test";
+import { env, SELF } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
+
+import type { KvBudget } from "../src/types";
+
+// Surface the wrangler.test.jsonc binding on the typed test env (the pool's
+// `env` is `Cloudflare.Env`, a global AMBIENT namespace interface designed for
+// merging — the namespace keyword is required here, not a module-style choice).
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cloudflare {
+    interface Env {
+      BUDGET_KV: KvBudget;
+    }
+  }
+}
 
 const BASE = "https://worker.test";
 
@@ -101,6 +115,17 @@ describe("404", () => {
     const r = await SELF.fetch(`${BASE}/nope`);
     expect(r.status).toBe(404);
     expect(await r.json()).toEqual({ detail: "Not found." });
+  });
+});
+
+describe("BUDGET_KV binding", () => {
+  it("is bound and Miniflare-emulated (guards the wrangler.test.jsonc mirror)", async () => {
+    // Regression guard for the fleet lesson: a binding in Env but missing from
+    // wrangler.test.jsonc breaks this suite. KV, unlike ai/vectorize, emulates
+    // locally — prove it with a real round-trip through workerd.
+    expect(env.BUDGET_KV).toBeDefined();
+    await env.BUDGET_KV.put("budget:smoke", "1", { expirationTtl: 172800 });
+    expect(await env.BUDGET_KV.get("budget:smoke")).toBe("1");
   });
 });
 

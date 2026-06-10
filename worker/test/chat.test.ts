@@ -13,16 +13,18 @@
 // in Node 18+, so the handler runs unmodified outside workerd. TEST_MODE=true
 // means zero network and no @anthropic-ai/sdk code path is touched.
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import worker from "../src/index";
 import { BM25Retriever } from "../src/bm25";
+import { dayKey } from "../src/budget";
 import { mockAgentReply } from "../src/mock";
 import { formatSnippets } from "../src/prompt";
 import type {
   AiBinding,
   AssetsFetcher,
   Env,
+  KvBudget,
   RateLimit,
   Snippet,
   VectorizeBinding,
@@ -52,6 +54,35 @@ function throwingLimiter(): RateLimit {
   return {
     limit() {
       return Promise.reject(new Error("binding outage"));
+    },
+  };
+}
+
+/** In-memory KV stub for the daily budget counter (pre-seedable, inspectable). */
+function stubBudgetKv(initial: Record<string, string> = {}): KvBudget & {
+  store: Map<string, string>;
+} {
+  const store = new Map(Object.entries(initial));
+  return {
+    store,
+    get(key: string) {
+      return Promise.resolve(store.get(key) ?? null);
+    },
+    put(key: string, value: string) {
+      store.set(key, value);
+      return Promise.resolve();
+    },
+  };
+}
+
+/** A throwing budget KV to prove the gate fails open like the limiter. */
+function throwingBudgetKv(): KvBudget {
+  return {
+    get() {
+      return Promise.reject(new Error("KV outage"));
+    },
+    put() {
+      return Promise.reject(new Error("KV outage"));
     },
   };
 }
@@ -89,7 +120,9 @@ function makeEnv(overrides: Partial<Env> = {}): Env {
     TEST_MODE: "true",
     LODESTAR_MODEL: "claude-haiku-4-5-20251001",
     MAX_TOKENS: "1024",
+    DAILY_BUDGET: "300",
     RATE_LIMITER: stubLimiter(),
+    BUDGET_KV: stubBudgetKv(),
     ASSETS: stubAssets(),
     AI: stubAi(),
     VECTORIZE: stubVectorize(),
@@ -303,6 +336,74 @@ describe("POST /api/chat rate limiting", () => {
     const r = await postChat("How do I network?", env);
     expect(r.status).toBe(200); // degraded to no-limit, not an outage
     await r.text();
+  });
+});
+
+describe("POST /api/chat daily budget", () => {
+  const MSG_BUDGET =
+    "Lodestar has reached its daily usage limit. It resets at midnight UTC. " +
+    "Please come back then.";
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  /** Remove the ambient key so the live path dies offline in the SDK's
+   *  missing-key check (pre-stream -> generic 502) — never a network call. */
+  function withoutAnthropicKey(): void {
+    vi.stubEnv("ANTHROPIC_API_KEY", undefined);
+  }
+
+  it("exhausted counter -> 429 with exact detail + Retry-After, pre-SDK", async () => {
+    // Seeded AT the limit; the gate fires before any Anthropic client exists,
+    // so this test needs no key and no network.
+    const kv = stubBudgetKv({ [dayKey(new Date())]: "5" });
+    const env = makeEnv({ TEST_MODE: "false", DAILY_BUDGET: "5", BUDGET_KV: kv });
+    const r = await postChat("internships?", env);
+    expect(r.status).toBe(429);
+    expect(await r.json()).toEqual({ detail: MSG_BUDGET });
+    const retryAfter = Number(r.headers.get("retry-after"));
+    expect(retryAfter).toBeGreaterThan(0);
+    expect(retryAfter).toBeLessThanOrEqual(86400);
+    expect(kv.store.get(dayKey(new Date()))).toBe("5"); // refusal wrote nothing
+  });
+
+  it('DAILY_BUDGET "0" refuses every live request (kill switch)', async () => {
+    const env = makeEnv({ TEST_MODE: "false", DAILY_BUDGET: "0" });
+    const r = await postChat("internships?", env);
+    expect(r.status).toBe(429);
+    expect(await r.json()).toEqual({ detail: MSG_BUDGET });
+  });
+
+  it("TEST_MODE bypasses the gate entirely (mock streams despite a dead KV)", async () => {
+    const env = makeEnv({
+      TEST_MODE: "true",
+      DAILY_BUDGET: "0",
+      BUDGET_KV: throwingBudgetKv(),
+    });
+    const r = await postChat("How do I write a resume?", env);
+    expect(r.status).toBe(200);
+    expect(r.headers.get("content-type")).toContain("text/event-stream");
+    await r.text();
+  });
+
+  it("fails OPEN when KV throws (the request proceeds; never a 429)", async () => {
+    withoutAnthropicKey();
+    const env = makeEnv({ TEST_MODE: "false", BUDGET_KV: throwingBudgetKv() });
+    const r = await postChat("How do I network?", env);
+    // Past the gate, the keyless SDK fails pre-stream -> generic 502. The
+    // point: a KV outage degrades to "no budget", not a refused request.
+    expect(r.status).not.toBe(429);
+    expect(r.status).toBe(502);
+  });
+
+  it("counts BEFORE serving: a request that later crashes still consumed 1", async () => {
+    withoutAnthropicKey();
+    const kv = stubBudgetKv();
+    const env = makeEnv({ TEST_MODE: "false", BUDGET_KV: kv });
+    const r = await postChat("internships?", env);
+    expect(r.status).toBe(502); // died in the keyless SDK path, after the gate
+    expect(kv.store.get(dayKey(new Date()))).toBe("1");
   });
 });
 

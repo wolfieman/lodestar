@@ -24,11 +24,16 @@ npm ci
 npx wrangler dev                       # local, offline (TEST_MODE=true via .dev.vars)
 npx wrangler deploy                    # publish (the custom domain rides wrangler.jsonc routes)
 npx wrangler secret put ANTHROPIC_API_KEY   # one-time; never in vars or files
+npx wrangler kv namespace create BUDGET_KV  # one-time; put the printed id in wrangler.jsonc
 ```
 
 - The assets binding serves `src/lodestar/static/` (the same `index.html` the Python
   apps use); `/static/*` requests are rewritten in `worker/src/index.ts` so the page
   is host-agnostic.
+- **Daily budget:** live `/api/chat` requests are counted per UTC day in `BUDGET_KV`
+  and refused with 429 past `DAILY_BUDGET` (default 300, set in `wrangler.jsonc`
+  vars). Setting it to `0` refuses all live traffic — a manual kill switch. See
+  `docs/security.md` for the design.
 - **Rollback:** re-create the DNS A record `lodestar → <shared-host IP>` (DNS-only)
   and the prior cPanel deploy below resumes serving immediately.
 

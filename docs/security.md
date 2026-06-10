@@ -34,6 +34,15 @@ the free plan, so the deploy pairs it with a zone **WAF rate-limiting rule** on
 input cap, and `max_tokens` 1024. A campus-NAT caveat applies to any per-IP limit
 (many students can share one egress IP) — limits are tuned generously for that.
 
+A **daily usage cap** sits between the per-IP limit and the spend cap: the Worker
+counts admitted live requests in a KV namespace (`BUDGET_KV`, one counter per UTC
+day — `worker/src/budget.ts`) and refuses with 429 + `Retry-After` once
+`DAILY_BUDGET` (default 300) is reached, resetting at UTC midnight. An explicit
+`DAILY_BUDGET=0` refuses all live traffic — a manual kill switch. The count is
+deliberately approximate (KV is eventually consistent) and the gate fails open on
+KV errors, mirroring the limiter: it is a backstop, not billing, and the provider
+spend cap remains the final stop. `TEST_MODE` traffic never touches the gate.
+
 ## Not yet hardened (documented, for a production pass)
 
 Authn/z, audit logging, output moderation, and a real (sandboxed) search

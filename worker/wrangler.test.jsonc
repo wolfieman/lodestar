@@ -9,6 +9,10 @@
   // never call env.AI or env.VECTORIZE), so dropping those two bindings keeps the
   // suite fully offline without changing what it exercises.
   //
+  // kv_namespaces is KEPT: unlike ai/vectorize, KV is fully Miniflare-emulated
+  // (local, offline), so BUDGET_KV binds without a remote proxy session. The id
+  // is an arbitrary local placeholder, not the production namespace.
+  //
   // Keep the kept fields in sync with wrangler.jsonc.
   "name": "lodestar",
   "main": "src/index.ts",
@@ -19,7 +23,9 @@
     "TEST_MODE": "true",
     "LODESTAR_MODEL": "claude-haiku-4-5-20251001",
     "MAX_TOKENS": "1024",
+    "DAILY_BUDGET": "300",
   },
+  "kv_namespaces": [{ "binding": "BUDGET_KV", "id": "budget-kv-local-test" }],
   "ratelimits": [
     {
       "name": "RATE_LIMITER",

@@ -18,6 +18,12 @@ export interface AssetsFetcher {
   fetch(request: Request): Promise<Response>;
 }
 
+/** KV namespace binding surface (only what the daily budget counter needs). */
+export interface KvBudget {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string, options: { expirationTtl: number }): Promise<void>;
+}
+
 /** Workers AI binding surface (used for bge-small-en-v1.5 embeddings only). */
 export interface AiBinding {
   run(model: string, inputs: { text: string[] }): Promise<{ data: number[][] }>;
@@ -41,8 +47,13 @@ export interface Env {
   LODESTAR_MODEL: string;
   /** Stringified int, "1024" by default (anthropic.py complete() default). */
   MAX_TOKENS: string;
+  /** Stringified int, "300" by default; an explicit "0" is a live-traffic kill
+   *  switch (budget.ts parseBudget). */
+  DAILY_BUDGET: string;
   /** Per-IP rate limiter bound via the GA `ratelimits` config. */
   RATE_LIMITER: RateLimit;
+  /** KV namespace holding the daily live-request counter (budget.ts). */
+  BUDGET_KV: KvBudget;
   /** Static assets; used to serve Flask-scheme /static/* paths (index.ts). */
   ASSETS: AssetsFetcher;
   /** Workers AI — same embedding model as the Python stack's fastembed. */
