@@ -1,0 +1,8 @@
+{
+  "//": "Canonical single-source markdownlint config; master in orchestrator/standards/docs-prose/, copied into each repo.",
+  "default": true,
+  "MD013": false,
+  "MD004": {
+    "style": "dash"
+  }
+}
