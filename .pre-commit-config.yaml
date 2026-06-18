@@ -13,3 +13,17 @@ repos:
     rev: v8.30.0
     hooks:
       - id: gitleaks
+  # Spelling + Markdown lint, pinned and warn-first. stages: [manual] keeps them
+  # advisory (run on demand via `pre-commit run --hook-stage manual --all-files`, not
+  # on every commit). Drop the stages line to promote to blocking once the shared
+  # dictionary proves quiet. Pins bumped by Dependabot like the hooks above.
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v10.0.1
+    hooks:
+      - id: cspell
+        stages: [manual]
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.22.1
+    hooks:
+      - id: markdownlint-cli2
+        stages: [manual]

@@ -373,6 +373,7 @@
     "vendorscope",
     "vendorsearchadvanceform",
     "venv",
+    "venvs",
     "Visio",
     "Vivanco",
     "Viya",
@@ -413,6 +414,7 @@
   ],
   "ignorePaths": [
     ".git/**",
+    "cspell.json",
     ".venv/**",
     "node_modules/**",
     "_site/**",
