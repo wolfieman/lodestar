@@ -65,7 +65,7 @@ WEB_SEARCH_QUERIES: list[str] = [
     "python internships",
     "what's a good scholarship?",
     'say "hi" to recruiters',
-    "O'Neil \"summer\" fellowships",
+    'O\'Neil "summer" fellowships',
     "tabs\tand\nnewlines",
 ]
 
@@ -156,9 +156,7 @@ def build_fixture() -> dict:
         "web_search": [
             {"query": q, "output": web.func(query=q)} for q in WEB_SEARCH_QUERIES
         ],
-        "rrf": [
-            {**case, "expected": _rrf_expected(case)} for case in RRF_CASES
-        ],
+        "rrf": [{**case, "expected": _rrf_expected(case)} for case in RRF_CASES],
         "routing_hint": {
             "category": category,
             "text": f"{parts[0]}{category}{parts[1]}{parts[2]}{parts[3]}",

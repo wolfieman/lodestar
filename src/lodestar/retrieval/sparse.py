@@ -24,9 +24,7 @@ class BM25Retriever:
 
     def __init__(self, snippets: list[Snippet]) -> None:
         self.snippets = snippets
-        corpus = [
-            _tokenize(f"{s.title} {s.content} {s.category}") for s in snippets
-        ]
+        corpus = [_tokenize(f"{s.title} {s.content} {s.category}") for s in snippets]
         self._bm25 = BM25Okapi(corpus)
 
     def retrieve(self, query: str, k: int = 4) -> list[Snippet]:

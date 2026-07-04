@@ -64,9 +64,7 @@ def web_search_tool() -> Tool:
         ),
         input_schema={
             "type": "object",
-            "properties": {
-                "query": {"type": "string", "description": "Search query."}
-            },
+            "properties": {"query": {"type": "string", "description": "Search query."}},
             "required": ["query"],
         },
         func=run,

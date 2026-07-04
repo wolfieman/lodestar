@@ -135,9 +135,7 @@ def test_bm25_fixture_is_fresh():
 
 AGENT_TS = WORKER_SRC / "agent.ts"
 MOCK_TS = WORKER_SRC / "mock.ts"
-AGENT_FIXTURE_PATH = (
-    REPO_ROOT / "worker" / "test" / "fixtures" / "agent_parity.json"
-)
+AGENT_FIXTURE_PATH = REPO_ROOT / "worker" / "test" / "fixtures" / "agent_parity.json"
 
 
 @pytest.mark.unit
@@ -168,8 +166,7 @@ def test_agent_strings_present_in_agent_ts():
     assert "Search the HBCU career knowledge base for guidance on resumes, " in src
     assert "interviews, scholarships, internships, networking, and academics." in src
     assert (
-        "Search the web for current scholarships, internships, and job postings."
-        in src
+        "Search the web for current scholarships, internships, and job postings." in src
     )
     assert "No matching knowledge found." in src
 
@@ -177,9 +174,9 @@ def test_agent_strings_present_in_agent_ts():
 @pytest.mark.unit
 def test_mock_agent_reply_parity():
     """mock.py run_tools template fragments are pinned on BOTH sides."""
-    mock_py = (
-        REPO_ROOT / "src" / "lodestar" / "providers" / "mock.py"
-    ).read_text(encoding="utf-8")
+    mock_py = (REPO_ROOT / "src" / "lodestar" / "providers" / "mock.py").read_text(
+        encoding="utf-8"
+    )
     mock_ts = MOCK_TS.read_text(encoding="utf-8")
     assert "[TEST_MODE agent] called tool '" in mock_py
     assert "Result preview: " in mock_py

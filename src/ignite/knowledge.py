@@ -18,9 +18,34 @@ from pathlib import Path
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 _STOPWORDS = frozenset(
     {
-        "a", "an", "and", "are", "as", "at", "be", "by", "can", "do", "for", "how",
-        "i", "in", "is", "it", "my", "of", "on", "or", "should", "some", "the",
-        "to", "what", "with", "you", "your",
+        "a",
+        "an",
+        "and",
+        "are",
+        "as",
+        "at",
+        "be",
+        "by",
+        "can",
+        "do",
+        "for",
+        "how",
+        "i",
+        "in",
+        "is",
+        "it",
+        "my",
+        "of",
+        "on",
+        "or",
+        "should",
+        "some",
+        "the",
+        "to",
+        "what",
+        "with",
+        "you",
+        "your",
     }
 )
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "knowledge.json"
@@ -74,6 +99,4 @@ def format_snippets(snippets: list[Snippet]) -> str:
     """Render snippets as markdown context for the system prompt."""
     if not snippets:
         return ""
-    return "\n\n".join(
-        f"### {s.title} ({s.category})\n{s.content}" for s in snippets
-    )
+    return "\n\n".join(f"### {s.title} ({s.category})\n{s.content}" for s in snippets)

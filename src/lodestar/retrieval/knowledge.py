@@ -64,6 +64,4 @@ def format_snippets(snippets: list[Snippet]) -> str:
     """Render snippets as markdown context for the system prompt."""
     if not snippets:
         return ""
-    return "\n\n".join(
-        f"### {s.title} ({s.category})\n{s.content}" for s in snippets
-    )
+    return "\n\n".join(f"### {s.title} ({s.category})\n{s.content}" for s in snippets)

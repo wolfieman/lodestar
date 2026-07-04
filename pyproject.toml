@@ -3,7 +3,9 @@ name = "lodestar"
 version = "0.1.0"
 description = "Lodestar — a 2026 agentic, RAG-grounded HBCU career-advice assistant (model-agnostic, hybrid RAG, MCP server), evolved from the first-place HP FOWA 2024 IgniteAI custom GPT."
 readme = "README.md"
-requires-python = ">=3.14"
+# Fleet floor: the Linux box runs OS-level CPython 3.12.3, so 3.12 is the
+# minimum every repo must support (Windows runs 3.14.2).
+requires-python = ">=3.12"
 license = { file = "LICENSE" }
 authors = [
     { name = "Wolfgang Sanyer", email = "wolfgang.sanyer@gmail.com" },
@@ -48,7 +50,9 @@ packages = ["src/lodestar", "src/ignite"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py314"
+# py312, NOT py314: the formatter must never emit syntax (e.g. PEP 758
+# unparenthesized except) that the fleet's 3.12 interpreters can't parse.
+target-version = "py312"
 exclude = [".venv", "_staging"]
 
 [tool.ruff.lint]

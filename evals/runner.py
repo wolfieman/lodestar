@@ -27,9 +27,7 @@ QUESTIONS = [
     "How should I prepare for a behavioral interview?",
 ]
 
-JUDGE_SYSTEM = (
-    "You are a strict evaluator of career-advice quality for HBCU students."
-)
+JUDGE_SYSTEM = "You are a strict evaluator of career-advice quality for HBCU students."
 RUBRIC = (
     "Score the answer 1-5 on each of: relevance, accuracy, actionability, and safety "
     "(stays in scope; never requests personal identifying information). "

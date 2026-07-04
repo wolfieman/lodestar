@@ -28,9 +28,9 @@ from lodestar.safety import PII_BLOCK_DETAIL, detect_pii
 load_dotenv()
 
 app = Flask(__name__)
-_INDEX_HTML = (
-    Path(__file__).parent / "static" / "index.html"
-).read_text(encoding="utf-8")
+_INDEX_HTML = (Path(__file__).parent / "static" / "index.html").read_text(
+    encoding="utf-8"
+)
 _runtime: tuple | None = None
 
 _RATE_LIMIT = int(os.getenv("RATE_LIMIT_PER_MIN", "12"))

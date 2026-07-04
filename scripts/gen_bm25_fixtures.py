@@ -85,9 +85,7 @@ def build_fixtures() -> dict:
 def main() -> None:
     fixtures = build_fixtures()
     FIXTURE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    FIXTURE_PATH.write_text(
-        json.dumps(fixtures, indent=2) + "\n", encoding="utf-8"
-    )
+    FIXTURE_PATH.write_text(json.dumps(fixtures, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {len(fixtures['cases'])} cases to {FIXTURE_PATH}")
 
 
