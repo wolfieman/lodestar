@@ -87,3 +87,25 @@ GPL `LICENSE`, or `tests/check_quota_limit.py`.
   answer hit the length limit and may be cut off — ask a follow-up for the rest."*;
   dropped-stream notice *"The connection dropped before the answer finished."*;
   scroll pill *"Jump to latest"*; retry button *"Try again"*.
+
+## 9. Strict tool use on the Anthropic tool-calling path
+
+**What:** `AnthropicProvider.run_tools()` (`src/lodestar/providers/anthropic.py`) now sends
+`strict: true` on every tool spec, and both tools' `input_schema` (`src/lodestar/agents/tools.py`)
+carry `additionalProperties: false` to satisfy strict mode's requirements.
+
+**Why best-for-us:** `run_tools()` previously sent unconstrained tool schemas — the model's
+`tool_use.input` was well-formed JSON but not schema-guaranteed. Both current tools
+(`retrieve_knowledge`, `web_search`) take a single required `query: string` with no unsupported
+constructs, so strict mode is free correctness (decode-time validation) with no schema rework.
+`MockProvider.run_tools()` is untouched — it never builds an API-shaped spec, so there's nothing
+to add strict to there.
+
+**Alternatives considered:** leaving specs unconstrained (status quo) and relying on the tool's
+own runtime handling of malformed input — rejected because it pushes a decode-time guarantee down
+to a runtime check for no reason, when every current schema already qualifies for `strict: true`
+as written.
+
+**When to revisit:** if a future tool's schema needs a construct strict mode rejects (recursive
+schemas, numeric/string length constraints), decide per-tool whether to redesign the schema to fit
+strict mode or drop `strict` for that one spec — don't blanket-disable it for the whole tool set.

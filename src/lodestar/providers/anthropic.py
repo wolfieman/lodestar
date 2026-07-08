@@ -67,6 +67,7 @@ class AnthropicProvider(LLMProvider):
                 "name": t.name,
                 "description": t.description,
                 "input_schema": t.input_schema,
+                "strict": True,
             }
             for t in tools
         ]

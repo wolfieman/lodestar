@@ -42,6 +42,7 @@ def retrieve_knowledge_tool(retriever: Retriever) -> Tool:
                 "query": {"type": "string", "description": "What to look up."}
             },
             "required": ["query"],
+            "additionalProperties": False,
         },
         func=run,
     )
@@ -66,6 +67,7 @@ def web_search_tool() -> Tool:
             "type": "object",
             "properties": {"query": {"type": "string", "description": "Search query."}},
             "required": ["query"],
+            "additionalProperties": False,
         },
         func=run,
     )
