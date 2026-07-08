@@ -35,7 +35,9 @@ class _FakeMessages:
 
     def create(self, **kwargs):
         self.calls.append(kwargs)
-        return _Response(content=[_Block(type="text", text="done")], stop_reason="end_turn")
+        return _Response(
+            content=[_Block(type="text", text="done")], stop_reason="end_turn"
+        )
 
 
 class _FakeAnthropicClient:
