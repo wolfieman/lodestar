@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/wolfieman-lodestar-badge.png)](https://mseep.ai/app/wolfieman-lodestar)
+
 # Lodestar 🧭
 
 > **A 2026 agentic, retrieval-grounded AI career assistant for HBCU students** — model-agnostic
